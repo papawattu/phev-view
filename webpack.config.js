@@ -4,6 +4,6 @@ module.exports = {
   entry: './src/app.js',
     output: {
     path: path.resolve(__dirname, 'html'),
-    filename: './html/bundle.js'
+    filename: 'bundle.js'
   }
 };

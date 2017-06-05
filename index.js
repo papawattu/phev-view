@@ -13,7 +13,7 @@ app.use(webpackDevMiddleware(compiler, {
   publicPath: "/" // Same as `output.publicPath` in most cases.
 }));
 
-app.get('/', function (req, res) {
+app.get('/public', function (req, res) {
   res.redirect('/html/index.html')
 })
 app.listen(3000, function () {
