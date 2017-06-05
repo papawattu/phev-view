@@ -1,0 +1,22 @@
+{
+  "name": "phev-view",
+  "version": "1.0.0",
+  "description": "Phev code viewer",
+  "main": "index.js",
+  "scripts": {
+    "test": "npm test",
+    "start": "node index.js"
+  },
+  "author": "Jamie Nuttall",
+  "license": "ISC",
+  "dependencies": {
+    "express": "^4.15.3",
+    "mqtt": "^2.8.0"
+  },
+  "devDependencies": {
+    "webpack": "^2.6.1",
+    "webpack-dev-middleware": "^1.10.2",
+    "webpack-dev-server": "^2.4.5",
+    "webpack-hot-middleware": "^2.18.0"
+  }
+}
