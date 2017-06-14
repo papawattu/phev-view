@@ -2,6 +2,7 @@ const mqtt = require('mqtt');
 const EncoderDecoder = require('./encoder_decoder');
 const Responder = require('./responder');
 import * as registerHandler from './register_handler';
+import * as firebase from 'firebase';
 
 function component(text) {
   var element = document.createElement('div');
@@ -10,13 +11,10 @@ function component(text) {
 
   return element;
 }
-function sendCommandComponents() {
-  const element = document.createElement('div');
 
-}
-function resetButton() {
-  const element = document.createElement('div');
-  const button = document.createElement('button');
+function resetButton(root) {
+  const element = root.createElement('div');
+  const button = root.createElement('button');
 
   button.name = 'reset';
   button.innerText = 'Reset'
@@ -30,11 +28,11 @@ function resetButton() {
     }, 5000);
   });
   element.appendChild(button);
-  document.body.appendChild(element);
+  root.body.appendChild(element);
 }
-function connectButton() {
-  const element = document.createElement('div');
-  const button = document.createElement('button');
+function connectButton(root) {
+  const element = root.createElement('div');
+  const button = root.createElement('button');
 
   button.name = 'connect';
   button.innerText = 'connect'
@@ -46,14 +44,32 @@ function connectButton() {
     }, 5000);
   });
   element.appendChild(button);
-  document.body.appendChild(element);
+  root.body.appendChild(element);
 }
 function validationError(text) {
   const error = document.createElement('div');
   error.innerText = text;
   document.body.appendChild(error);
 }
-function sendCommandComponent() {
+
+function validateSendCommand(register, value) {
+  const hexRx = /^[A-Fa-f0-9]+$/;
+  if (hexRx.exec(register)) {
+    if (hexRx.exec(value)) {
+      return true;
+    }
+  }
+  return false;
+}
+
+function sendCommand(register, value, validationError) {
+  const message = {};
+  message.command = 0xf6;
+  message.register = parseInt(registerInput.value, 16);
+  message.data = Buffer.from([parseInt(valueInput.value, 16)]);
+  client.publish('phev/send', EncoderDecoder.encode(message)); F
+}
+function sendCommandComponent(root) {
   const element = document.createElement('div');
   const registerInput = document.createElement('input');
   const registerLabel = document.createElement('label');
@@ -78,25 +94,9 @@ function sendCommandComponent() {
   sendButton.innerText = 'send';
   valueLabel.appendChild(valueInput);
 
-  sendButton.onclick = () => {
-    const hexRx = /^[A-Fa-f0-9]+$/;
-    if (hexRx.exec(registerInput.value)) {
-      if (hexRx.exec(valueInput.value)) {
-        console.log(registerInput.value);
-        console.log(valueInput.value);
-
-        const message = {};
-        message.command = 0xf6;
-        message.register = parseInt(registerInput.value, 16);
-        message.data = Buffer.from([parseInt(valueInput.value, 16)]);
-        //alert(EncoderDecoder.encode(message).toString('hex'));
-        client.publish('phev/send', EncoderDecoder.encode(message));
-      }
-
-    } else {
-      validationError('Register is not a valid hex value');
-    }
-  };
+  sendButton.onclick = () =>
+    (validateSendCommand(registerInput.value, valueInput.value) ?
+      sendCommand(registerInput.value, valueInput.value) : validationError('input invalid'));
 
   const legend = document.createElement('legend');
   legend.appendChild(document.createTextNode('Registers'));
@@ -109,7 +109,7 @@ function sendCommandComponent() {
     .parentElement.appendChild(document.createElement('br'))
     .parentElement.appendChild(sendButton);
 
-  document.body.appendChild(element);
+  root.body.appendChild(element);
 }
 
 function refeshRegisterDisplay() {
@@ -117,13 +117,13 @@ function refeshRegisterDisplay() {
   console.log('Refreshing');
   const responses = document.getElementById('responses');
   const updated = document.getElementById('updated');
-  
+
   while (responses.hasChildNodes()) {
     responses.removeChild(responses.lastChild);
   }
   regs.forEach((value, key) => {
-    if(key == 0x12) {
-      if(updated.lastChild) {
+    if (key == 0x12) {
+      if (updated.lastChild) {
         updated.removeChild(updated.lastChild);
       }
       updated.appendChild(document.createTextNode('20' + value[0] + '-' + value[1] + '-' + value[2] + '-' + value[3] + ':' + value[4] + ':' + value[5]));
@@ -141,17 +141,44 @@ client.on('message', (topic, payload) => {
     const message = EncoderDecoder.decode(data);
     //document.body.appendChild(component('message ' + data.toString('hex')));
     //document.body.appendChild(component('Response ' + EncoderDecoder.encode(Responder.respond(message)).toString('hex')));
-    response = Buffer.concat([response,EncoderDecoder.encode(Responder.respond(message))]);
+    response = Buffer.concat([response, EncoderDecoder.encode(Responder.respond(message))]);
     if (message.command == 0x6f && message.type == 0) {
       registerHandler.updateRegister(message.register, message.data);
     }
   });
   client.publish('phev/send', response);
-    
+
   refeshRegisterDisplay();
 
 });
 
-sendCommandComponent();
-resetButton();
-connectButton();
+sendCommandComponent(document);
+resetButton(document);
+connectButton(document);
+
+const styleEl = document.createElement('style');
+let styleSheet;
+
+document.head.appendChild(styleEl);
+
+styleSheet = styleEl.sheet;
+
+styleSheet.insertRule('* { margin: 10px }', 0);
+
+
+const config = {
+    apiKey: "AIzaSyDo4HOpjUvts6hLHOjDD4ehSkJzUXykNyE",
+    authDomain: "phev-db3fa.firebaseapp.com",
+    databaseURL: "https://phev-db3fa.firebaseio.com",
+    projectId: "phev-db3fa",
+    storageBucket: "phev-db3fa.appspot.com",
+    messagingSenderId: "557258334399"
+  };
+  firebase.initializeApp(config);
+const database = firebase.database;
+let codes = null;
+
+database().ref('/').once('value',(code) => {
+  console.log(code.val().codes);
+  codes = code.val().codes;
+});
