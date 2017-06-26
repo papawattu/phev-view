@@ -3,6 +3,7 @@ const EncoderDecoder = require('./encoder_decoder');
 const Responder = require('./responder');
 import * as registerHandler from './register_handler';
 import * as firebase from 'firebase';
+import CarData from './car_data';
 
 function component(text) {
   var element = document.createElement('div');
@@ -144,6 +145,7 @@ client.on('message', (topic, payload) => {
     response = Buffer.concat([response, EncoderDecoder.encode(Responder.respond(message))]);
     if (message.command == 0x6f && message.type == 0) {
       registerHandler.updateRegister(message.register, message.data);
+   //   CarData.update(message.register,message.data);
     }
   });
   client.publish('phev/send', response);
