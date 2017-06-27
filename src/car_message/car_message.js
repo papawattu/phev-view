@@ -1,6 +1,12 @@
 import mqtt from 'mqtt';
 import EncoderDecoder from './encoder_decoder'; 
+import { Readable } from 'stream';
 
+class MyReadable extends Readable {
+  constructor(options) {
+    super(options);
+  }
+}
 export function connect() {
     return mqtt.connect('ws://jenkins.wattu.com:8080/mqtt');
 }
