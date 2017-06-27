@@ -1,1 +1,1 @@
-export { default as CarMessage } from './car_message'; 
+export { CarMessageHandler } from './car_message'; 

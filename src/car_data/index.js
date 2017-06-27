@@ -1,3 +1,2 @@
-import CarData from '.'
 
-export default CarData;
+export { CarDataStore } from './car_data';

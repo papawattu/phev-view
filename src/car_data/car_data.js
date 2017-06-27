@@ -1,10 +1,27 @@
-export default class CarData {
-    constructor({database}) {
-        this.database = database;
+import * as firebase from 'firebase';
+
+
+export class CarDataStore {
+    constructor({ db } = {}) {
+        const config = {
+            apiKey: "AIzaSyDo4HOpjUvts6hLHOjDD4ehSkJzUXykNyE",
+            authDomain: "phev-db3fa.firebaseapp.com",
+            databaseURL: "https://phev-db3fa.firebaseio.com",
+            projectId: "phev-db3fa",
+            storageBucket: "phev-db3fa.appspot.com",
+            messagingSenderId: "557258334399"
+        };
+
+        if(!db) {
+            firebase.initializeApp(config);
+            this.database = firebase.database;
+        } else {
+            this.database = db;
+        }
     }
-    update(reg,val) {
+    update({ register, value }) {
         const registers = this.database.ref.child('registers');
 
-        registers.set({register : reg, value : val});
+        registers.set({ register: register, value: value });
     }
 }

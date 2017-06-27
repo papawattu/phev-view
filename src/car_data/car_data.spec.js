@@ -16,7 +16,7 @@ database.ref.child = sinon.stub().returns(registers);
 
 const config = { database };
 
-const sut = new CarData(config);
+const sut = new CarDataStore(config);
 
 describe('Car Data',() => {
     it('Should bootstrap',() => {
@@ -24,9 +24,9 @@ describe('Car Data',() => {
     });
     it('Should update',() => {
         
-        sut.update(0x11,0xff);
-        assert(database.ref.child.withArgs('registers').calledOnce,'database ref should be called');
-        assert(registers.set.withArgs({register : 0x11, value : 0xff}).calledOnce,'set should be called with reg 0x11 and val 0xff');
+        sut.update({register: 0x11, value : 0xff});
+        assert(database.ref.child.calledWith('registers'),'database ref should be called');
+        assert(registers.set.calledWith(sinon.match({register : 0x11,value : 0xff})),'set should be called with reg 0x11 and val 0xff');
         
     });
 });

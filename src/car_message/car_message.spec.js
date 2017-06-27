@@ -1,6 +1,6 @@
 import chai from 'chai';
 import sinon from 'sinon';
-import CarMessage from './car_message';
+import { CarMessageHandler } from './car_message';
 
 const assert = chai.assert;
 
@@ -14,21 +14,24 @@ database.ref = sinon.stub();
 database.ref.child = sinon.stub().returns(registers);
 
 const mqtt = {};
-mqtt.connect = sinon.stub();
+const client = {};
+client.subscribe = sinon.stub();
+mqtt.connect = sinon.stub().returns(client);
+
 
 const config = { mqtt };
 
-const sut = new CarMessage(config);
+const sut = new CarMessageHandler(config);
 
 describe('Car Message',() => {
     it('Should bootstrap',() => {
         assert.isNotNull(sut);
     });
-    it('Should connect',(done) => {
-        
-        sut.connect(() => {
-            done();
-        });
-        
+    it('Should connect',() => {
+        assert(mqtt.connect.calledOnce);
+        assert(mqtt.connect.calledWith('ws://jenkins.wattu.com:8080/mqtt'));       
+    });
+    it('Should subscribe',() => {
+        assert(sut.client.subscribe.calledWith('phev/receive'));       
     });
 });
