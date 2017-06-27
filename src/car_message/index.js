@@ -1,0 +1,1 @@
+export { default as CarMessage } from './car_message'; 

@@ -1,9 +1,11 @@
-const mqtt = require('mqtt');
-const EncoderDecoder = require('./encoder_decoder');
-const Responder = require('./responder');
-import * as registerHandler from './register_handler';
+import * as registerHandler from './car_message/register_handler';
 import * as firebase from 'firebase';
 import CarData from './car_data';
+import * as CarMessage from './car_message/car_message';
+
+const client = CarMessage.connect();
+CarMessage.subscribe(client);
+client.pipe(process.stdout);
 
 function component(text) {
   var element = document.createElement('div');
@@ -133,26 +135,6 @@ function refeshRegisterDisplay() {
     }
   });
 }
-const client = mqtt.connect('ws://jenkins.wattu.com:8080/mqtt');
-client.subscribe('phev/receive');
-
-client.on('message', (topic, payload) => {
-  let response = Buffer.from([]);
-  EncoderDecoder.popMessage(payload, (data) => {
-    const message = EncoderDecoder.decode(data);
-    //document.body.appendChild(component('message ' + data.toString('hex')));
-    //document.body.appendChild(component('Response ' + EncoderDecoder.encode(Responder.respond(message)).toString('hex')));
-    response = Buffer.concat([response, EncoderDecoder.encode(Responder.respond(message))]);
-    if (message.command == 0x6f && message.type == 0) {
-      registerHandler.updateRegister(message.register, message.data);
-   //   CarData.update(message.register,message.data);
-    }
-  });
-  client.publish('phev/send', response);
-
-  refeshRegisterDisplay();
-
-});
 
 sendCommandComponent(document);
 resetButton(document);
@@ -169,18 +151,18 @@ styleSheet.insertRule('* { margin: 10px }', 0);
 
 
 const config = {
-    apiKey: "AIzaSyDo4HOpjUvts6hLHOjDD4ehSkJzUXykNyE",
-    authDomain: "phev-db3fa.firebaseapp.com",
-    databaseURL: "https://phev-db3fa.firebaseio.com",
-    projectId: "phev-db3fa",
-    storageBucket: "phev-db3fa.appspot.com",
-    messagingSenderId: "557258334399"
-  };
-  firebase.initializeApp(config);
+  apiKey: "AIzaSyDo4HOpjUvts6hLHOjDD4ehSkJzUXykNyE",
+  authDomain: "phev-db3fa.firebaseapp.com",
+  databaseURL: "https://phev-db3fa.firebaseio.com",
+  projectId: "phev-db3fa",
+  storageBucket: "phev-db3fa.appspot.com",
+  messagingSenderId: "557258334399"
+};
+firebase.initializeApp(config);
 const database = firebase.database;
 let codes = null;
 
-database().ref('/').once('value',(code) => {
+database().ref('/').once('value', (code) => {
   console.log(code.val().codes);
   codes = code.val().codes;
 });
