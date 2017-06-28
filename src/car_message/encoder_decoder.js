@@ -4,19 +4,27 @@ export function popMessage(messages,callback) {
     const message = extract(messages);
     callback(message);
     const idx = findCommand(messages);
-    if(messages.length - message.length) {
-        const remaining = Buffer.alloc(messages.length - message.length);
-        messages.copy(remaining, 0, message.length + idx);
-        popMessage(remaining,callback);
+
+    if(idx > -1) {
+        if(messages.length - message.length) {
+            const remaining = Buffer.alloc(messages.length - message.length);
+            messages.copy(remaining, 0, message.length + idx);
+            popMessage(remaining,callback);
+        }
+    } else {
+        throw Error('Command not found in message');
     }
 }
 
-function findCommand(messages) {
+export function findCommand(messages) {
     let idx = 0;
     let command = messages[0];
     while(allowedCommands.indexOf(command) < 0 && idx < messages.length) {
        idx++;
        command = messages[idx]; 
+    }
+    if(idx == messages.length) {
+        return -1;
     }
     return idx;
 }
@@ -24,7 +32,7 @@ function extract(messages) {
     const idx = findCommand(messages);
     let command = messages[0];
 
-    if(idx < messages.length) {
+    if(idx > -1) {
         const length = messages[1+idx] + 2 || 0;
     
         if(length > messages.length - idx) {
@@ -51,7 +59,6 @@ export function decode(message) {
 }
 export function encode(command) {
     if(command == null) return null;
- //   console.log('Command ' + JSON.stringify(command));
     const message = Buffer.alloc(command.data.length + 5);
     message[0] = command.command;
     message[1] = command.data.length + 3;

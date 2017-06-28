@@ -1,6 +1,6 @@
 import chai from 'chai';
 import sinon from 'sinon';
-import CarData from './car_data';
+import CarDataStore from './car_data';
 
 const assert = chai.assert;
 

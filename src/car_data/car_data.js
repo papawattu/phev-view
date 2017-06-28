@@ -1,8 +1,8 @@
 import * as firebase from 'firebase';
 
 
-export class CarDataStore {
-    constructor({ db } = {}) {
+export default class CarDataStore {
+    constructor({ database } = {}) {
         const config = {
             apiKey: "AIzaSyDo4HOpjUvts6hLHOjDD4ehSkJzUXykNyE",
             authDomain: "phev-db3fa.firebaseapp.com",
@@ -12,11 +12,11 @@ export class CarDataStore {
             messagingSenderId: "557258334399"
         };
 
-        if(!db) {
+        if(!database) {
             firebase.initializeApp(config);
             this.database = firebase.database;
         } else {
-            this.database = db;
+            this.database = database;
         }
     }
     update({ register, value }) {

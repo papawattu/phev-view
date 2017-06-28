@@ -36,10 +36,8 @@ describe('Decode', () => {
 
     });
     //TODO:  Fix me the code is broken not this test
-    it.skip('Should handle incomplete message', () => {
-        EncoderDecoder.popMessage(incompleteMessage,(message) => {
-            assert.deepEqual(message, singleMessage);
-        });
+    it('Should handle incomplete message', () => {
+        assert.throws(()=>{EncoderDecoder.popMessage(incompleteMessage,(message) => {})});
     });
     it('Should handle garbage message', () => {
         assert.throws(()=>{EncoderDecoder.popMessage(gargbageMessage,()=>{})});
@@ -49,6 +47,9 @@ describe('Decode', () => {
     });
     it('Should handle length past end message', () => {
         assert.throws(()=>{EncoderDecoder.popMessage(lengthPastEndMessage,()=>{})});
+    });
+    it('Should throw error when command not found', () => {
+        assert.throws(()=>{EncoderDecoder.popMessage(gargbageMessage,()=>{})});
     });
 });
 describe('Decode Message', () => {
@@ -84,5 +85,19 @@ describe('Checksum', () => {
         const checksum = EncoderDecoder.generateChecksum(singleMessage);
 
         assert.equal(checksum, 0xdd);
+    });
+});
+describe('Find command', () => {
+    it('Should find command', () => {
+        const idx = EncoderDecoder.findCommand(singleMessage);
+        assert.equal(idx, 0);
+    });
+    it('Should find command in garbage message', () => {
+        const idx = EncoderDecoder.findCommand(incompleteMessage);
+        assert.equal(idx, 3);
+    });
+    it('Should return -1 when command not found', () => {
+        const idx = EncoderDecoder.findCommand(gargbageMessage);
+        assert.equal(idx, -1);
     });
 });

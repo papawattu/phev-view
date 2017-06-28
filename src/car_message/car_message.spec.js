@@ -1,6 +1,6 @@
 import chai from 'chai';
 import sinon from 'sinon';
-import { CarMessageHandler } from './car_message';
+import CarMessageHandler from './car_message';
 
 const assert = chai.assert;
 
