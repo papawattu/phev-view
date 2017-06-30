@@ -16,6 +16,9 @@ export const CarMessageHandler = ({ mqtt = _mqtt, url = 'ws://jenkins.wattu.com:
         decode: message => {
             
             return EncoderDecoder.decode(message);
+        },
+        encode: message => {
+            return EncoderDecoder.encode(message);
         }
     };
 }
