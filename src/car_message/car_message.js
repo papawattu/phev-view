@@ -1,33 +1,21 @@
 import _mqtt from 'mqtt';
-import EncoderDecoder from './encoder_decoder'; 
+import * as EncoderDecoder from './encoder_decoder';
 
-export default class CarMessageHandler {
-    constructor({mqtt = _mqtt} = {}) {
-        this.client = mqtt.connect('ws://jenkins.wattu.com:8080/mqtt');
-        this.client.subscribe('phev/receive');
-    }
-    onMessage(cb) {
-        this.client.on('message',(topic, payload) => {
-            const builder = new ResponseBuilder();
-            EncoderDecoder.popMessage(payload, (data) => {
-                builder.respond(message);
-                cb(EncoderDecoder.decode(data));
+export const CarMessageHandler = ({ mqtt = _mqtt, url = 'ws://jenkins.wattu.com:8080/mqtt', topic = 'phev/receive' } = {}) => {
+    const client = mqtt.connect(url);
+    client.subscribe(topic);
+
+    return {
+        split: messages => {
+            const resp = [];
+            EncoderDecoder.popMessage(messages, message => {
+                resp.push(message);
             });
-        });
-    }
-    responder(message) {
-    
-    }
-}
-
-class ResponseBuilder {
-    constructor() {
-        this.buffer = Buffer.from([]);
-    }
-    addResponse(message) {
-        this.buffer = Buffer.concat([this.buffer,response]);
-    }
-    response() {
-        return Buffer.from(this.buffer);
-    }
+            return resp;
+        },
+        decode: message => {
+            
+            return EncoderDecoder.decode(message);
+        }
+    };
 }
