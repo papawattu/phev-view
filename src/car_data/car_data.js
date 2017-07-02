@@ -24,5 +24,10 @@ export const CarDataStore = ({ database }) => {
            
             return message;
         },
+        getRegister: reg => {
+            return _database().ref('/registers/' + reg).once('value').then(register => {
+                return register.val().data;
+            });
+        },
     }
 }

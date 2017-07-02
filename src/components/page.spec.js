@@ -6,6 +6,7 @@ const assert = chai.assert;
 
 const sut = Page('PHEV View');
 
+
 describe('Page',() => {
     it('Should bootstrap',() => {
         assert.isNotNull(sut);
