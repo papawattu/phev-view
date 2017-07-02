@@ -6,9 +6,11 @@
   "scripts": {
     "test": "npm run test-unit",
     "start": "node index.js",
+    "start-dev": "npm run build && webpack-dev-server",
     "test-unit": "cross-env NODE_ENV=test mocha --require babel-polyfill --compilers js:babel-core/register --recursive ./src/**/*.spec.js",
     "test-watch": "cross-env NODE_ENV=test mocha --watch --require babel-polyfill --compilers js:babel-core/register --recursive ./src/**/*.spec.js",
-    "build": "babel src -d lib"
+    "build": "babel src -d lib && webpack",
+    "deploy": "npm run build && firebase deploy"
   },
   "author": "Jamie Nuttall",
   "license": "ISC",

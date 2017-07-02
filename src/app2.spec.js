@@ -1,12 +1,11 @@
 import chai from 'chai';
-import sinon from 'sinon';
-import Page from './page';
+import App2 from './app2';
 
 const assert = chai.assert;
 
-const sut = Page('PHEV View');
+const sut = App2();
 
-describe('Page',() => {
+describe('App',() => {
     it('Should bootstrap',() => {
         assert.isNotNull(sut);
     });

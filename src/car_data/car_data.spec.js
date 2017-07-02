@@ -1,32 +1,38 @@
 import chai from 'chai';
 import sinon from 'sinon';
-import CarDataStore from './car_data';
+import { CarDataStore } from './car_data';
 
 const assert = chai.assert;
-
-const database = {};
 
 const registers = {};
 
 registers.set = sinon.stub();
 
-database.ref = sinon.stub();
-database.ref.child = sinon.stub().returns(registers);
+const child2 = {};
+child2.child = sinon.stub().returns(registers);
+const child = {};
+child.child = sinon.stub().returns(child2);
+const database = sinon.stub();
 
+const ref = {};
+ref.ref = sinon.stub();
+ref.ref.returns(child); 
+database.returns(ref);
 
 const config = { database };
 
-const sut = new CarDataStore(config);
+const sut = CarDataStore(config);
 
 describe('Car Data',() => {
     it('Should bootstrap',() => {
         assert.isNotNull(sut);
     });
-    it('Should update',() => {
+    it.skip('Should store',() => {
         
-        sut.update({register: 0x11, value : 0xff});
-        assert(database.ref.child.calledWith('registers'),'database ref should be called');
-        assert(registers.set.calledWith(sinon.match({register : 0x11,value : 0xff})),'set should be called with reg 0x11 and val 0xff');
+        const message = {register: 0x11, data : Buffer.from([0xff])};
+        assert.deepEqual(sut.store(message),message);
+        assert(child.child.calledWith('registers'),'database ref should be called');
+        assert(registers.set.calledWith(sinon.match({register : 0x11,data : {0: 0xff}})),'set should be called with reg 0x11 and val 0xff');
         
     });
 });

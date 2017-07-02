@@ -1,3 +1,3 @@
-function createPage() {
-    
+export default function Page() {
+    return {};
 }

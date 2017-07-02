@@ -1,9 +1,9 @@
-import _mqtt from 'mqtt';
 import * as EncoderDecoder from './encoder_decoder';
+import * as Responder from './responder';
 
-export const CarMessageHandler = ({ mqtt = _mqtt, url = 'ws://jenkins.wattu.com:8080/mqtt', topic = 'phev/receive' } = {}) => {
-    const client = mqtt.connect(url);
-    client.subscribe(topic);
+export const CarMessageHandler = ({ store } = {}) => {
+    
+    const _store = store;
 
     return {
         split: messages => {
@@ -14,11 +14,22 @@ export const CarMessageHandler = ({ mqtt = _mqtt, url = 'ws://jenkins.wattu.com:
             return resp;
         },
         decode: message => {
-            
+
             return EncoderDecoder.decode(message);
         },
         encode: message => {
             return EncoderDecoder.encode(message);
+        },
+        respond: message => {
+            return Responder.respond(message);
+        },
+        join: messages => {
+            return Buffer.concat(messages);
+        },
+        store: message => {
+            if(message.command == 0x6f) _store.store(message)
+            return message;
         }
+
     };
 }

@@ -1,29 +1,41 @@
+import mqtt from 'mqtt';
+import * as firebase from 'firebase';
 import { CarMessageHandler } from './car_message';
-import  CarDataStore  from './car_data';
+import { CarDataStore } from './car_data';
 
-const handler = CarMessageHandler();
-const store = new CarDataStore();
+export default function () {
+    const config = {
+        apiKey: "AIzaSyDo4HOpjUvts6hLHOjDD4ehSkJzUXykNyE",
+        authDomain: "phev-db3fa.firebaseapp.com",
+        databaseURL: "https://phev-db3fa.firebaseio.com",
+        projectId: "phev-db3fa",
+        storageBucket: "phev-db3fa.appspot.com",
+        messagingSenderId: "557258334399"
+    };
 
+    if (!firebase.apps.length) {
+        firebase.initializeApp(config);
+    }
+    const database = firebase.database;
+    const store = CarDataStore({ database });
+    const handler = CarMessageHandler({ store });
 
-client.on('message', messages => {
-    client.publish('phev/send',  handler.respond(
-        store.update(
-            handler.split(messages).map(handler.decode)))).map(handler.encode));
-});
-mqtt.publish('phev/send',sender(
-    encode(
-        responseHandler(
-            store(database,
-                decode(
-                    split(
-                        await receiveMessages(mqtt)
-                    )
-                )
+    const client = mqtt.connect('ws://jenkins.wattu.com:8080/mqtt');
+    client.subscribe('phev/receive');
+
+    client.on('message', (topic,messages) => {
+        client.publish('phev/send',
+            handler.join(
+                handler.split(messages)
+                    .map(handler.decode)
+                    .map(handler.store)
+                    .map(handler.respond)
+                    .map(handler.encode)
             )
-        )
-    )
-);
+        );
 
-handler.onMessage((message) => {
-    store.update(message);
-});
+
+    });
+    return {
+    }
+}

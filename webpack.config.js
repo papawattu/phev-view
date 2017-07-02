@@ -1,10 +1,17 @@
 var path = require('path');
 
 module.exports = {
-  entry: './src/app.js',
+  entry: './lib/index.js',
     output: {
-    path: path.resolve(__dirname, 'html'),
+    path: path.resolve(__dirname, 'public'),
     filename: 'bundle.js',
-    publicPath: '/html/lib'
-  }
+    publicPath: 'public'
+  },
+  devServer: {
+    contentBase: "./public",
+    hot: true,
+    port: 3000,
+    historyApiFallback: true
+
+},
 };

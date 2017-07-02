@@ -1,27 +1,28 @@
-import * as firebase from 'firebase';
-
-
-export default class CarDataStore {
-    constructor({ database } = {}) {
-        const config = {
-            apiKey: "AIzaSyDo4HOpjUvts6hLHOjDD4ehSkJzUXykNyE",
-            authDomain: "phev-db3fa.firebaseapp.com",
-            databaseURL: "https://phev-db3fa.firebaseio.com",
-            projectId: "phev-db3fa",
-            storageBucket: "phev-db3fa.appspot.com",
-            messagingSenderId: "557258334399"
-        };
-
-        if(!database) {
-            firebase.initializeApp(config);
-            this.database = firebase.database;
-        } else {
-            this.database = database;
+export const CarDataStore = ({ database }) => {
+    const _database = database;
+    const convertBufToObj = data => {
+        const values = {};
+        for (const reg of data.entries()) {
+            Object.defineProperty(values, reg[0], {
+                value: reg[1],
+                writable: true,
+                enumerable: true,
+                configurable: true
+            });
         }
+        return values;
     }
-    update({ register, value }) {
-        const registers = this.database.ref.child('registers');
+    return {
 
-        registers.set({ register: register, value: value });
+        store: message => {
+            const { register, data } = message;
+            const registers = _database().ref().child('registers').child(register);
+
+            const values = convertBufToObj(data);
+           
+            registers.set({ data: values, lastUpdated: new Date().toISOString() });    
+           
+            return message;
+        },
     }
 }
