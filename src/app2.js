@@ -3,6 +3,7 @@ import * as firebase from 'firebase';
 import { CarMessageHandler } from './car_message';
 import { CarDataStore } from './car_data';
 import Registers from './model/registers';
+import RegisterContainer from './components/register_container';
 
 
 export default function(document2) {
@@ -41,11 +42,8 @@ export default function(document2) {
 
 
     document.addEventListener('DOMContentLoaded', event => {
-        registers.subscribe(registers => {
-            const root = document.getElementById('root');
-            root.appendChild(document.createTextNode('new 666' + registers));
-        });
+        const registerContainer = RegisterContainer({ document, registers });
+        document.body.appendChild(registerContainer);
+        return;
     });
-
-    return;
 }

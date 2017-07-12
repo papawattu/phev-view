@@ -1,19 +1,30 @@
-export function RegisterContainer({ document, registers }) {
+export default function RegisterContainer({ document, registers }) {
     const doc = document;
-    const update = registers => {
-        registers.toJS();
-    };
+    const table = doc.createElement('table');
+    const tableHeader = doc.createElement('thead');
+    const tableHeaderRow = doc.createElement('tr');
+    const tableHeaderColOneHead = doc.createElement('th');
+    const tableHeaderColOneText = doc.createTextNode('Register');
+    const tableHeaderColTwoHead = doc.createElement('th');
+    const tableHeaderColTwoText = doc.createTextNode('Data');
+    const tableRow = doc.createElement('tr');
+    const tableRegisterCol = doc.createElement('td');
+    const tableRegisterColText = doc.createTextNode('0x00');
+    const tableDataCol = doc.createElement('td');
+    const tableDataColText = doc.createTextNode('0xff');
+    table.appendChild(tableHeader);
+    tableHeader.appendChild(tableHeaderRow);
+    tableHeaderRow.appendChild(tableHeaderColOneHead);
+    tableHeaderColOneHead.appendChild(tableHeaderColOneText);
+    tableHeaderRow.appendChild(tableHeaderColTwoHead);
+    tableHeaderColTwoHead.appendChild(tableHeaderColTwoText);
+    table.appendChild(tableRow);
+    tableRow.appendChild(tableRegisterCol);
+    tableRegisterCol.appendChild(tableRegisterColText);
+    tableRow.appendChild(tableDataCol);
+    tableDataCol.appendChild(tableDataColText);
 
-    resgisters.subscribe(registers => update(registers));
-    return {
-        add: register => {
-            registers.push(register);
-        },
-        render: () => {
-            return doc.createElement('div');
-        },
-        update: () => {
+    //registers.subscribe(r => update(r));
 
-        }
-    }
+    return table;
 }
