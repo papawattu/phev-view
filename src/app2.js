@@ -38,13 +38,13 @@ export default function (document) {
         );
     });
 
+    
     document.addEventListener('DOMContentLoaded', event => {
-        
-        document.getElementById('root').appendChild(
-           container.render()
-        );
+        registers.subscribe(registers => {
+            const root = document.getElementById('root');
+            root.appendChild(document.createTextNode(registers));    
+        });    
     });
 
-    return {
-    }
+    return;
 }
