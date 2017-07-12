@@ -2,7 +2,7 @@ import mqtt from 'mqtt';
 import * as firebase from 'firebase';
 import { CarMessageHandler } from './car_message';
 import { CarDataStore } from './car_data';
-import { RegisterContainer } from './components/register_container';
+import Registers from './model/registers';
 
 export default function (document) {
 
@@ -19,9 +19,9 @@ export default function (document) {
         firebase.initializeApp(config);
     }
     const database = firebase.database;
-    const store = CarDataStore({ database });
-    const handler = CarMessageHandler({ store });
-  //  const page = Page({document, store});
+    //const store = CarDataStore({ database });
+    //const handler = CarMessageHandler({ store });
+    const registers = Registers({database});
     
     const client = mqtt.connect('ws://jenkins.wattu.com:8080/mqtt');
     client.subscribe('phev/receive');
