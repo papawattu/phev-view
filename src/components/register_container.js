@@ -1,5 +1,4 @@
-export default function RegisterContainer({ document, registers }) {
-    const doc = document;
+const createRegisterTable = doc => {
     const table = doc.createElement('table');
     const tableHeader = doc.createElement('thead');
     const tableHeaderRow = doc.createElement('tr');
@@ -12,6 +11,7 @@ export default function RegisterContainer({ document, registers }) {
     const tableRegisterColText = doc.createTextNode('0x00');
     const tableDataCol = doc.createElement('td');
     const tableDataColText = doc.createTextNode('0xff');
+
     table.appendChild(tableHeader);
     tableHeader.appendChild(tableHeaderRow);
     tableHeaderRow.appendChild(tableHeaderColOneHead);
@@ -24,7 +24,17 @@ export default function RegisterContainer({ document, registers }) {
     tableRow.appendChild(tableDataCol);
     tableDataCol.appendChild(tableDataColText);
 
-    //registers.subscribe(r => update(r));
+    return table;
+}
+
+export default function RegisterContainer({ document, registers }) {
+
+    const table = createRegisterTable(document);
+
+    registers.subscribe(reg => {
+        console.log(reg.toJS());
+        //tableRegisterCol.appendChild()
+    });
 
     return table;
 }
