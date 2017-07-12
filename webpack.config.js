@@ -1,17 +1,29 @@
 var path = require('path');
 
 module.exports = {
-  entry: './lib/index.js',
+    entry: './src/index.js',
     output: {
-    path: path.resolve(__dirname, 'public'),
-    filename: 'bundle.js',
-    publicPath: 'public'
-  },
-  devServer: {
-    contentBase: "./public",
-    hot: true,
-    port: 3000,
-    historyApiFallback: true
-
-},
+        path: path.resolve(__dirname, 'public'),
+        filename: 'bundle.js',
+        publicPath: '/'
+    },
+    devServer: {
+        contentBase: path.join(__dirname, 'public'),
+        hot: true,
+        port: 3000,
+        historyApiFallback: true,
+        filename: 'bundle.js'
+    },
+    module: {
+        rules: [{
+            test: /\.js$/,
+            exclude: /(node_modules|bower_components)/,
+            use: {
+                loader: 'babel-loader',
+                options: {
+                    presets: ['env']
+                }
+            }
+        }]
+    }
 };

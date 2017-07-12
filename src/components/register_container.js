@@ -1,6 +1,10 @@
-export function RegisterContainer({ document }) {
+export function RegisterContainer({ document, registers }) {
     const doc = document;
-    const registers = [];
+    const update = registers => {
+        registers.toJS();
+    };
+
+    resgisters.subscribe(registers => update(registers));
     return {
         add: register => {
             registers.push(register);

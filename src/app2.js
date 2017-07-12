@@ -4,7 +4,8 @@ import { CarMessageHandler } from './car_message';
 import { CarDataStore } from './car_data';
 import Registers from './model/registers';
 
-export default function (document) {
+
+export default function(document2) {
 
     const config = {
         apiKey: "AIzaSyDo4HOpjUvts6hLHOjDD4ehSkJzUXykNyE",
@@ -21,8 +22,8 @@ export default function (document) {
     const database = firebase.database;
     //const store = CarDataStore({ database });
     //const handler = CarMessageHandler({ store });
-    const registers = Registers({database});
-    
+    const registers = Registers({ database });
+
     const client = mqtt.connect('ws://jenkins.wattu.com:8080/mqtt');
     client.subscribe('phev/receive');
 
@@ -30,20 +31,20 @@ export default function (document) {
         client.publish('phev/send',
             handler.join(
                 handler.split(messages)
-                    .map(handler.decode)
-                    .map(handler.store)
-                    .map(handler.respond)
-                    .map(handler.encode)
+                .map(handler.decode)
+                .map(handler.store)
+                .map(handler.respond)
+                .map(handler.encode)
             )
         );
     });
 
-    
+
     document.addEventListener('DOMContentLoaded', event => {
         registers.subscribe(registers => {
             const root = document.getElementById('root');
-            root.appendChild(document.createTextNode(registers));    
-        });    
+            root.appendChild(document.createTextNode('new 666' + registers));
+        });
     });
 
     return;
