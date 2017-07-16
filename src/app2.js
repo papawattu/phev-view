@@ -43,7 +43,7 @@ export default function(document2) {
 
     document.addEventListener('DOMContentLoaded', event => {
         const registerContainer = RegisterContainer({ document, registers });
-        document.body.appendChild(registerContainer);
+        document.getElementById('root').appendChild(registerContainer);
         return;
     });
 }
