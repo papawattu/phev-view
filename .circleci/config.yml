@@ -9,5 +9,5 @@ jobs:
       - run: npm install
       - run: npm test
       - store_artifacts:
-        path: /code/test-results
-        destination: prefix
+          path: /code/test-results
+          destination: prefix
