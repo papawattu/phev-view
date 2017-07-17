@@ -9,10 +9,7 @@ jobs:
       - run: npm install
       - run: npm test
       - store_test_results:
-          path: $CIRCLE_TEST_REPORTS/junit/test-results.xml
-      - store_artifacts:
-          path: ~/code/test-results
-          destination: prefix
+          path: test-results.xml
 test:
   override:
     - mocha test --reporter mocha-junit-reporter:
