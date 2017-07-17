@@ -4,9 +4,11 @@ import { CarMessageHandler } from './car_message';
 import { CarDataStore } from './car_data';
 import Registers from './model/registers';
 import RegisterContainer from './components/register_container';
+import undom from 'undom';
+ 
+const document = undom();
 
-
-export default function(document2) {
+export default function(document) {
 
     const config = {
         apiKey: "AIzaSyDo4HOpjUvts6hLHOjDD4ehSkJzUXykNyE",

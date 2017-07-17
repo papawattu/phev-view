@@ -17,7 +17,7 @@ const createRegisterTable = id => {
     };
 }
 
-export default function RegisterContainer() {
+export default function RegisterContainer(document) {
 
     const table = document.createElement('div');
 

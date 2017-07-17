@@ -1,6 +1,6 @@
 import chai from 'chai';
 import sinon from 'sinon';
-import { RegisterContainer } from './register_container';
+import RegisterContainer from './register_container';
 
 const assert = chai.assert;
 
@@ -8,7 +8,7 @@ const document = {};
 
 document.createElement = sinon.stub().returns({ tagName: 'div' });
 
-const sut = RegisterContainer({ document });
+const sut = RegisterContainer(document);
 
 describe.skip('Register Container', () => {
     it('Should bootstrap', () => {
