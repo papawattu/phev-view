@@ -10,7 +10,7 @@ document.createElement = sinon.stub().returns({ tagName: 'div' });
 
 const sut = RegisterContainer({ document });
 
-describe('Register Container', () => {
+describe.skip('Register Container', () => {
     it('Should bootstrap', () => {
         assert.isNotNull(sut);
     });
