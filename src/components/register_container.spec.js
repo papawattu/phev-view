@@ -15,17 +15,17 @@ const registers = {
     2: [0,1,2,3]
 };
 const map = fromJS(registers);
-const sut = RegisterContainer( { document, registers: map } );
+
 
 describe('Register Container', () => {
-    
+
     it('Should bootstrap', () => {
+        const sut = RegisterContainer( { document, registers: map } );
         assert.isNotNull(sut);
     });
     it('Should return a table', () => {
-        const dom = sut.render();
-       
-        assert.equal(pretty(dom.outerHTML), pretty(html));
+        const sut = RegisterContainer( { document, registers: map } );
+        assert.equal(pretty(sut.outerHTML), pretty(html));
     });
 
 });
