@@ -10,7 +10,7 @@ export default function RegisterContainer({ document, registers }) {
     const registerTitleText = domText('Register');
     const registerDataTitle = domCreate('th');
     const registerDataTitleText = domText('Data');
-    
+
     const registerBody = domCreate('tbody');
 
 
@@ -26,9 +26,10 @@ export default function RegisterContainer({ document, registers }) {
     const toRow = e => '<tr>' + e + '</tr>';
     const toData = value => '<td>' + value + '</td>';
     registerBody.innerHTML = Object.entries(
-        registers.map((data, register) => 
-            toRow(toData(toHex(register)) + data.map(value => toData(toHex(value))).toArray().join(''))
-            ).toJS()).map(r => r[1]).join('');
+        registers.map((data, register) =>
+            toRow(toData(toHex(register))
+                + data.map(value => toData(toHex(value))).toArray().join(''))
+        ).toJS()).map(r => r[1]).join('');
 
     return registerContainer
 }
