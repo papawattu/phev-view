@@ -23,10 +23,11 @@ export default function RegisterContainer({ document, registers }) {
     registerContainer.appendChild(registerBody);
 
     const toHex = dec => Number.parseInt(dec).toString(16);
-
+    const toRow = e => '<tr>' + e + '</tr>';
+    const toData = value => '<td>' + value + '</td>';
     registerBody.innerHTML = Object.entries(
         registers.map((data, register) => 
-            `<tr><td>${toHex(register)}</td>${data.map(value => `<td>${toHex(value)}</td>`).toArray().join('')}</tr>`
+            toRow(toData(toHex(register)) + data.map(value => toData(toHex(value))).toArray().join(''))
             ).toJS()).map(r => r[1]).join('');
 
     return registerContainer
