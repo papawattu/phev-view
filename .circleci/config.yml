@@ -8,11 +8,10 @@ jobs:
       - checkout
       - run: npm install
       - run: npm test
-      - run: npm run deploy
       - store_test_results:
           path: test-results.xml
 deployment:
   production:
     branch: master
-firebase login:ci    commands:
+    commands:
       - firebase deploy --token=1/TTEYWThg-x-xK8cCKJcEZvLyh9L6M_JdGq4MKjTkhL8 --non-interactive
