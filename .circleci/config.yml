@@ -11,3 +11,8 @@ jobs:
       - run: npm run deploy
       - store_test_results:
           path: test-results.xml
+deployment:
+  production:
+    branch: master
+firebase login:ci    commands:
+      - firebase deploy --token=1/TTEYWThg-x-xK8cCKJcEZvLyh9L6M_JdGq4MKjTkhL8 --non-interactive
