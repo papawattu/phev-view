@@ -10,8 +10,7 @@ jobs:
       - run: npm test
       - store_test_results:
           path: test-results.xml
-deployment:
-  production:
-    branch: master
-    commands:
-      - firebase deploy --token=1/TTEYWThg-x-xK8cCKJcEZvLyh9L6M_JdGq4MKjTkhL8 --non-interactive
+      - deploy:
+        name: firebase deploy
+        command: |
+          firebase deploy --token "$FIREBASE_TOKEN"
