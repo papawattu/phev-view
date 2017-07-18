@@ -1,41 +1,30 @@
-const createTable = () => document.createElement('table');
-const createTableHeader = () => document.createElement('thead');
-const createTableHeaderName = name => document.createElement('th').appendChild(document.createTextNode(name)).parentElement;
-const createTableRow = () => document.createElement('tr');
-const createTableElement = text => document.createElement('td');
+export default function RegisterContainer({ document, registers }) {
+
+    const domCreate = e => document.createElement(e);
+    const domText = e => document.createTextNode(e);
+
+    const registerContainer = domCreate('table');
+    const registerHeader = domCreate('thead');
+    const registerHeaderRow = domCreate('tr');
+    const registerTitle = domCreate('th');
+    const registerTitleText = domText('Register');
+    const registerDataTitle = domCreate('th');
+    const registerDataTitleText = domText('Data');
+    
+    const registerBody = domCreate('tbody');
 
 
-const createRegisterTable = id => {
+    registerContainer.appendChild(registerHeader);
+    registerHeader.appendChild(registerHeaderRow);
+    registerHeaderRow.appendChild(registerTitle);
+    registerHeaderRow.appendChild(registerDataTitle);
+    registerTitle.appendChild(registerTitleText);
+    registerDataTitle.appendChild(registerDataTitleText);
+    registerContainer.appendChild(registerBody);
 
-    const table = createTable()
-        .appendChild(createTableHeader()
-            .appendChild(createTableRow()));
+    registerBody.innerHTML = Object.entries(
+        registers.map((data, register) => `<tr><td>${Number.parseInt(register).toString(16)}</td>${data.map(value => `<td>${Number.parseInt(value).toString(16)}</td>`).toArray().join('')}</tr>`)
+            .toJS()).map(r => r[1]).join('');
 
-    return {
-        table :table,
-        update: registers => registers.map(console.log),
-    };
-}
-
-export default function RegisterContainer(document) {
-
-    const table = document.createElement('div');
-
-    table.innerHTML = `
-        <table>
-            <thead>
-                <tr>
-                    <th>Register</th><th>Data</th>
-                </tr>
-            </thead>
-            <tbody>
-                <tr><td>1</td><td>2</td></tr>
-            </tbody>
-        </table>`
-    //registers.subscribe(reg => {
-    //    table.update(reg.keys);
-        //tableRegisterCol.appendChild()
-    //});
-
-    return table;
+    return registerContainer
 }

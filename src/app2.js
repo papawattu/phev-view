@@ -3,10 +3,7 @@ import * as firebase from 'firebase';
 import { CarMessageHandler } from './car_message';
 import { CarDataStore } from './car_data';
 import Registers from './model/registers';
-import RegisterContainer from './components/register_container';
-import undom from 'undom';
- 
-const document = undom();
+import RegisterContainer from './components/register_container'; 
 
 export default function(document) {
 
@@ -42,9 +39,11 @@ export default function(document) {
         );
     });
 
-
     document.addEventListener('DOMContentLoaded', event => {
-        document.getElementById('root').appendChild(RegisterContainer());
-        return;
+        registers.subscribe(registers => { 
+            document.getElementById('root').innerHTML = '';
+            document.getElementById('root').appendChild(RegisterContainer({ document, registers }));
+            
+        });
     });
 }
