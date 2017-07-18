@@ -23,7 +23,7 @@ export default function(document) {
     //const store = CarDataStore({ database });
     //const handler = CarMessageHandler({ store });
     const registers = Registers({ database });
-
+/*
     const client = mqtt.connect('ws://jenkins.wattu.com:8080/mqtt');
     client.subscribe('phev/receive');
 
@@ -38,7 +38,7 @@ export default function(document) {
             )
         );
     });
-
+*/
     document.addEventListener('DOMContentLoaded', event => {
         registers.subscribe(registers => { 
             document.getElementById('root').innerHTML = '';
