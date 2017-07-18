@@ -12,5 +12,5 @@ jobs:
           path: test-results.xml
       - deploy:
         name: firebase deploy
-        command: |
-          firebase deploy --token "$FIREBASE_TOKEN"
+        commands:
+          - firebase deploy --token "$FIREBASE_TOKEN"
