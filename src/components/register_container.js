@@ -22,9 +22,12 @@ export default function RegisterContainer({ document, registers }) {
     registerDataTitle.appendChild(registerDataTitleText);
     registerContainer.appendChild(registerBody);
 
+    const toHex = dec => Number.parseInt(dec).toString(16);
+
     registerBody.innerHTML = Object.entries(
-        registers.map((data, register) => `<tr><td>${Number.parseInt(register).toString(16)}</td>${data.map(value => `<td>${Number.parseInt(value).toString(16)}</td>`).toArray().join('')}</tr>`)
-            .toJS()).map(r => r[1]).join('');
+        registers.map((data, register) => 
+            `<tr><td>${toHex(register)}</td>${data.map(value => `<td>${toHex(value)}</td>`).toArray().join('')}</tr>`
+            ).toJS()).map(r => r[1]).join('');
 
     return registerContainer
 }
