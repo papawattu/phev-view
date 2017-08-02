@@ -1,6 +1,6 @@
 import chai from 'chai';
 import sinon from 'sinon';
-import RegisterContainer from './register_container';
+import registerContainer from './register_container';
 import { Map, List, fromJS } from 'immutable';
 import pretty from 'pretty';
 import { JSDOM } from 'jsdom'
@@ -9,71 +9,74 @@ const assert = chai.assert;
 
 const { document } = new JSDOM().window;
 
+const labels = {};
+const registers = {};
 
+labels.subscribe = sinon.stub();
+labels.subscribe.returns({KO_WF_CHG_GUN_STATUS_EVR: 2})
+    
 describe('Register Container', () => {
 
     it('Should bootstrap', () => {
-        const registers = {
+        const data = {
             1: [0],
             2: [0, 1, 2, 3]
         };
-        const map = fromJS(registers);
+        const registers = fromJS(data);
 
-        const sut = RegisterContainer({ document, registers: map });
+        const sut = registerContainer({ document, registers, labels });
         assert.isNotNull(sut);
     });
     it('Should return a table', () => {
-        const registers = {
+        const data = {
             1: [0],
             2: [0, 1, 2, 3]
         };
-        const map = fromJS(registers);
-        const html = '<table><thead><tr><th>Register</th><th>Data</th></tr></thead><tbody><tr><td>1</td><td>0</td></tr><tr><td>2</td><td>0</td><td>1</td><td>2</td><td>3</td></tr></tbody></table>'
 
-        const sut = RegisterContainer({ document, registers: map });
-        assert.equal(sut.outerHTML, html);
+        const registers = fromJS(data);
+    
+        const sut = registerContainer({ document, registers, labels});
+        assert(sut.outerHTML.includes('<table>'));
+        assert(sut.outerHTML.includes('</table>'));
     });
     it('Should handle empty registers', () => {
-        const registers = {
+        const data = {
         };
-        const html = '<table><thead><tr><th>Register</th><th>Data</th></tr></thead><tbody></tbody></table>'
+        
+        const registers = fromJS(data);
 
-        const map = fromJS(registers);
-
-        const sut = RegisterContainer({ document, registers: map });
-        assert.equal(sut.outerHTML, html);
+        const sut = registerContainer({ document, registers, labels });
+        assert(sut.outerHTML.includes('<tbody></tbody>'));
     });
     it('Should handle empty data', () => {
-        const registers = {
+        const data = {
             1: [],
         };
-        const html = '<table><thead><tr><th>Register</th><th>Data</th></tr></thead><tbody><tr><td>1</td></tr></tbody></table>'
- 
-        const map = fromJS(registers);
+        const registers = fromJS(data);
 
-        const sut = RegisterContainer({ document, registers: map });
-        assert.equal(sut.outerHTML, html);
+        const sut = registerContainer({ document, registers, labels });
+        assert(sut.outerHTML.includes('<td>1</td>'));
     });
-    it('Should show registers in hex', () => {
-        const registers = {
-            16: [0],
+    it('Should show register label', () => {
+        const data = {
+            2: [0],
         };
-        const html = '<table><thead><tr><th>Register</th><th>Data</th></tr></thead><tbody><tr><td>10</td><td>0</td></tr></tbody></table>'
+        const registers = fromJS(data);
 
-        const map = fromJS(registers);
-
-        const sut = RegisterContainer({ document, registers: map });
-        assert.equal(sut.outerHTML, html);
+        const labels = {
+            KO_WF_CHG_GUN_STATUS_EVR: 2
+        }
+        const sut = registerContainer({ document, registers, labels });
+        console.log(sut.outerHTML);
+        assert(sut.outerHTML.includes('KO_WF_CHG_GUN_STATUS_EVR'));
     });
     it('Should show data in hex', () => {
-        const registers = {
+        const data = {
             16: [255],
         };
-        const html = '<table><thead><tr><th>Register</th><th>Data</th></tr></thead><tbody><tr><td>10</td><td>ff</td></tr></tbody></table>'
+        const registers = fromJS(data);
 
-        const map = fromJS(registers);
-
-        const sut = RegisterContainer({ document, registers: map });
-        assert.equal(sut.outerHTML, html);
+        const sut = registerContainer({ document, registers, labels});
+        assert(sut.outerHTML.includes('<td>ff</td>'));
     });
 });

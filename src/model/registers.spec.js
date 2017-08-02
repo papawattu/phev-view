@@ -1,13 +1,14 @@
 import chai from 'chai';
 import sinon from 'sinon';
-import Registers from './registers';
+import registers from './registers';
+import database from '../database';
 
 const assert = chai.assert;
 
-const database = {}
-//const sut = Registers({database});
+//const database = {}
+const sut = registers({database});
 
-describe.skip('Register',() => {
+describe('Register',() => {
     it('Should bootstrap',() => {
         assert.isNotNull(sut);
     });

@@ -1,4 +1,4 @@
-export default function RegisterContainer({ document, registers }) {
+export default function RegisterContainer({ document, registers, labels }) {
 
     const domCreate = e => document.createElement(e);
     const domText = e => document.createTextNode(e);
@@ -24,12 +24,18 @@ export default function RegisterContainer({ document, registers }) {
 
     const toHex = dec => Number.parseInt(dec).toString(16);
     const toRow = e => '<tr>' + e + '</tr>';
-    const toData = value => '<td>' + value + '</td>';
+    const toData = value => '<td class="data">' + value + '</td>';
+    const toHeader = value => '<td>' + value + '</td>';
+    const toLabel = e => Object.entries(labels)[e];
+
     registerBody.innerHTML = Object.entries(
         registers.map((data, register) =>
-            toRow(toData(toHex(register))
+            toRow(toHeader(
+                toLabel(register) ?
+                    toLabel(register)[0] : `NO LABEL - 0x${toHex(register)}`)
                 + data.map(value => toData(toHex(value))).toArray().join(''))
         ).toJS()).map(r => r[1]).join('');
+
 
     return registerContainer
 }
