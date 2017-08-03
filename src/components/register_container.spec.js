@@ -36,6 +36,34 @@ describe('Register Container', () => {
         assert(sut.outerHTML.includes('<table>'));
         assert(sut.outerHTML.includes('</table>'));
     });
+    it('Should have Register title', () => {
+        const data = {
+        };
+        
+        const registers = fromJS(data);
+
+        const sut = registerContainer({ document, registers, labels });
+        assert(sut.outerHTML.includes('<th>Register</th>'));
+    });
+    it('Should have Data title', () => {
+        const data = {
+        };
+        
+        const registers = fromJS(data);
+
+        const sut = registerContainer({ document, registers, labels });
+        assert(sut.outerHTML.includes('<th>Data</th>'));
+    });
+    it('Should have Text title', () => {
+        const data = {
+        };
+        
+        const registers = fromJS(data);
+
+        const sut = registerContainer({ document, registers, labels });
+        console.log(sut.outerHTML);
+        assert(sut.outerHTML.includes('<th>Text</th>'));
+    });
     it('Should handle empty registers', () => {
         const data = {
         };

@@ -9,7 +9,7 @@
         "start-dev": "webpack-dev-server --hot",
         "test-unit": "cross-env NODE_ENV=test mocha --reporter mocha-circleci-reporter --require babel-polyfill --compilers js:babel-core/register --recursive ./src/**/*.spec.js",
         "test-watch": "cross-env NODE_ENV=test mocha --watch --require babel-polyfill --compilers js:babel-core/register --recursive ./src/**/*.spec.js",
-        "build": "babel src -d lib && webpack",
+        "build": "babel src -d lib && webpack -p",
         "deploy": "npm run build && firebase deploy"
     },
     "author": "Jamie Nuttall",

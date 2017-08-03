@@ -10,6 +10,8 @@ export default function RegisterContainer({ document, registers, labels }) {
     const registerTitleText = domCreateText('Register');
     const registerDataTitle = domCreateEl('th');
     const registerDataTitleText = domCreateText('Data');
+    const registerTextTitle = domCreateEl('th');
+    const registerTextTitleText = domCreateText('Text');
 
     const registerBody = domCreateEl('tbody');
 
@@ -17,8 +19,12 @@ export default function RegisterContainer({ document, registers, labels }) {
     registerHeader.appendChild(registerHeaderRow);
     registerHeaderRow.appendChild(registerTitle);
     registerHeaderRow.appendChild(registerDataTitle);
+    registerHeaderRow.appendChild(registerTextTitle);
+    
     registerTitle.appendChild(registerTitleText);
     registerDataTitle.appendChild(registerDataTitleText);
+    registerTextTitle.appendChild(registerTextTitleText);
+
     registerContainer.appendChild(registerBody);
 
     const toHex = dec => '0x' + (Number.parseInt(dec).toString(16).length < 2 ? 
