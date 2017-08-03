@@ -11,9 +11,10 @@ const responseLabels = ({ database }) => {
     return Rx.Observable
         .fromEvent(database().ref('/codes/'), 'value')
         .map(e => e.val())
-        //.reduce((e,x) => e.push(x),[]);
-        .map(x=> {
-            return Object.assign(...Object.keys(x).filter(z => z.includes('_EVR',z.length-4) && z.startsWith('KO_WF_')).map(y => ({[y]:x[y]})));
+        .map(x => {
+            return Object.assign(...Object.keys(x)
+                .filter(z => z.includes('_EVR', z.length - 4) && z.startsWith('KO_WF_'))
+                .map(y => ({ [y]: x[y] })));
         });
 }
 export { labels, responseLabels };

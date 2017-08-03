@@ -7,7 +7,7 @@ const assert = chai.assert;
 const document = {};
 
 document.addEventListener = sinon.stub();
-
+/*
 const sut = App2(document);
 
 describe('App',() => {
@@ -15,3 +15,4 @@ describe('App',() => {
         assert.isNotNull(sut);
     });
 });
+*/

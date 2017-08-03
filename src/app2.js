@@ -46,15 +46,14 @@ export default function (document) {
         registers({ database }),
         responseLabels({ database })
     ).subscribe(x => {
-        console.log('all loaded' + JSON.stringify(x[2]));
-        document.getElementById('root').innerHTML = '';
-        document.getElementById('root').appendChild(registerContainer(
-            {
+        document.getElementById('root')
+            .innerHTML = '';
+        document.getElementById('root')
+            .appendChild(registerContainer({
                 document,
                 registers: x[1],
                 labels: x[2]
             }));
-
     });
 
 }

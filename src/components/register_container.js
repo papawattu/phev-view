@@ -1,18 +1,17 @@
 export default function RegisterContainer({ document, registers, labels }) {
 
-    const domCreate = e => document.createElement(e);
-    const domText = e => document.createTextNode(e);
+    const domCreateEl = e => document.createElement(e);
+    const domCreateText = e => document.createTextNode(e);
 
-    const registerContainer = domCreate('table');
-    const registerHeader = domCreate('thead');
-    const registerHeaderRow = domCreate('tr');
-    const registerTitle = domCreate('th');
-    const registerTitleText = domText('Register');
-    const registerDataTitle = domCreate('th');
-    const registerDataTitleText = domText('Data');
+    const registerContainer = domCreateEl('table');
+    const registerHeader = domCreateEl('thead');
+    const registerHeaderRow = domCreateEl('tr');
+    const registerTitle = domCreateEl('th');
+    const registerTitleText = domCreateText('Register');
+    const registerDataTitle = domCreateEl('th');
+    const registerDataTitleText = domCreateText('Data');
 
-    const registerBody = domCreate('tbody');
-
+    const registerBody = domCreateEl('tbody');
 
     registerContainer.appendChild(registerHeader);
     registerHeader.appendChild(registerHeaderRow);
@@ -22,20 +21,24 @@ export default function RegisterContainer({ document, registers, labels }) {
     registerDataTitle.appendChild(registerDataTitleText);
     registerContainer.appendChild(registerBody);
 
-    const toHex = dec => Number.parseInt(dec).toString(16);
+    const toHex = dec => '0x' + (Number.parseInt(dec).toString(16).length < 2 ? 
+        '0' + Number.parseInt(dec).toString(16) 
+        : Number.parseInt(dec).toString(16));
     const toRow = e => '<tr>' + e + '</tr>';
-    const toData = value => '<td class="data">' + value + '</td>';
+    const toData = value => '<td>' + value + '</td>';
     const toHeader = value => '<td>' + value + '</td>';
-    const toLabel = e => Object.entries(labels)[e];
-
+    const findLabel = (e,labels) => Object.entries(labels)[e];
+    const noLabel = e => `NO LABEL - ${toHex(e)}`;
+    const toLabel = (e,labels) => findLabel(e,labels) ? findLabel(e,labels)[0] : noLabel(e);
+    const toDataRow = x => x.map(e => toData(toHex(e))).toArray().join('');
+ 
     registerBody.innerHTML = Object.entries(
         registers.map((data, register) =>
-            toRow(toHeader(
-                toLabel(register) ?
-                    toLabel(register)[0] : `NO LABEL - 0x${toHex(register)}`)
-                + data.map(value => toData(toHex(value))).toArray().join(''))
-        ).toJS()).map(r => r[1]).join('');
-
+            toRow(
+                toHeader(toLabel(register,labels) + toDataRow(data))))
+           .toJS())
+           .map(x => x[1])
+           .join('');
 
     return registerContainer
 }

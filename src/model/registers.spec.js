@@ -1,6 +1,6 @@
 import chai from 'chai';
 import sinon from 'sinon';
-import registers from './registers';
+import { registers } from './registers';
 import database from '../database';
 
 const assert = chai.assert;

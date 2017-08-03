@@ -9,12 +9,9 @@ const assert = chai.assert;
 
 const { document } = new JSDOM().window;
 
-const labels = {};
+const labels = {KO_WF_CHG_GUN_STATUS_EVR: 2,KO_WF_OPTION_HTR_PRSNT_EVR: 1};
 const registers = {};
 
-labels.subscribe = sinon.stub();
-labels.subscribe.returns({KO_WF_CHG_GUN_STATUS_EVR: 2})
-    
 describe('Register Container', () => {
 
     it('Should bootstrap', () => {
@@ -55,28 +52,24 @@ describe('Register Container', () => {
         const registers = fromJS(data);
 
         const sut = registerContainer({ document, registers, labels });
-        assert(sut.outerHTML.includes('<td>1</td>'));
+        assert(sut.outerHTML.includes('<td>KO_WF_OPTION_HTR_PRSNT_EVR</td>'));
     });
     it('Should show register label', () => {
         const data = {
-            2: [0],
+            1: [0],
         };
         const registers = fromJS(data);
 
-        const labels = {
-            KO_WF_CHG_GUN_STATUS_EVR: 2
-        }
         const sut = registerContainer({ document, registers, labels });
-        console.log(sut.outerHTML);
-        assert(sut.outerHTML.includes('KO_WF_CHG_GUN_STATUS_EVR'));
+        assert(sut.outerHTML.includes('KO_WF_OPTION_HTR_PRSNT_EVR'));
     });
     it('Should show data in hex', () => {
         const data = {
-            16: [255],
+            1: [255],
         };
         const registers = fromJS(data);
 
-        const sut = registerContainer({ document, registers, labels});
-        assert(sut.outerHTML.includes('<td>ff</td>'));
+        const sut = registerContainer({ document, registers, labels});;
+        assert(sut.outerHTML.includes('<td>0xff</td>'));
     });
 });
