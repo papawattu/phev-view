@@ -9,38 +9,23 @@ import Rx from 'rxjs/Rx';
 
 export default function (document) {
 
-    /*
-        const client = mqtt.connect('ws://jenkins.wattu.com:8080/mqtt');
-        client.subscribe('phev/receive');
-    
-        client.on('message', (topic, messages) => {
-            client.publish('phev/send',
-                handler.join(
-                    handler.split(messages)
+    const store = CarDataStore({database});
+    const handler = CarMessageHandler({store});
+    const client = mqtt.connect('wss://secure.wattu.com:8883/mqtt');
+    client.subscribe('phev/receive');
+
+    client.on('message', (topic, messages) => {
+        client.publish('phev/send',
+            handler.join(
+                handler.split(messages)
                     .map(handler.decode)
                     .map(handler.store)
                     .map(handler.respond)
                     .map(handler.encode)
-                )
-            );
-        });
-    */
-    /*
-    Rx.Observable.zip(
-        Rx.Observable.fromEvent(document, 'DOMContentLoaded'),
-        registers({ database }),
-        labels({ database }),
-        (registers, labels) => ({ registers, labels }))
-            .subscribe(x => {
-                document.getElementById('root').innerHTML = '';
-                document.getElementById('root').appendChild(registerContainer(
-                {
-                    document,
-                    registers: x.registers,
-                    labels: x.labels
-                }));
-        });
-            */
+            )
+        );
+    });
+
     Rx.Observable.zip(
         Rx.Observable.fromEvent(document, 'DOMContentLoaded'),
         registers({ database }),

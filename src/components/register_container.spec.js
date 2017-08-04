@@ -9,8 +9,8 @@ const assert = chai.assert;
 
 const { document } = new JSDOM().window;
 
-const labels = {KO_WF_CHG_GUN_STATUS_EVR: 2,KO_WF_OPTION_HTR_PRSNT_EVR: 1};
-const registers = {};
+const labels = { KO_WF_CHG_GUN_STATUS_EVR: 2, KO_WF_OPTION_HTR_PRSNT_EVR: 1 };
+const registers = {};    
 
 describe('Register Container', () => {
 
@@ -31,15 +31,15 @@ describe('Register Container', () => {
         };
 
         const registers = fromJS(data);
-    
-        const sut = registerContainer({ document, registers, labels});
+
+        const sut = registerContainer({ document, registers, labels });
         assert(sut.outerHTML.includes('<table>'));
         assert(sut.outerHTML.includes('</table>'));
     });
     it('Should have Register title', () => {
         const data = {
         };
-        
+
         const registers = fromJS(data);
 
         const sut = registerContainer({ document, registers, labels });
@@ -48,7 +48,7 @@ describe('Register Container', () => {
     it('Should have Data title', () => {
         const data = {
         };
-        
+
         const registers = fromJS(data);
 
         const sut = registerContainer({ document, registers, labels });
@@ -57,17 +57,16 @@ describe('Register Container', () => {
     it('Should have Text title', () => {
         const data = {
         };
-        
+
         const registers = fromJS(data);
 
         const sut = registerContainer({ document, registers, labels });
-        console.log(sut.outerHTML);
         assert(sut.outerHTML.includes('<th>Text</th>'));
     });
     it('Should handle empty registers', () => {
         const data = {
         };
-        
+
         const registers = fromJS(data);
 
         const sut = registerContainer({ document, registers, labels });
@@ -80,16 +79,27 @@ describe('Register Container', () => {
         const registers = fromJS(data);
 
         const sut = registerContainer({ document, registers, labels });
-        assert(sut.outerHTML.includes('<td>KO_WF_OPTION_HTR_PRSNT_EVR</td>'));
+        assert(sut.outerHTML.includes('<td>KO_WF_OPTION_HTR_PRSNT_EVR</td><td></td>'));
     });
     it('Should show register label', () => {
         const data = {
-            1: [0],
+            2: [0],
         };
         const registers = fromJS(data);
 
         const sut = registerContainer({ document, registers, labels });
-        assert(sut.outerHTML.includes('KO_WF_OPTION_HTR_PRSNT_EVR'));
+            
+        assert(sut.outerHTML.includes('KO_WF_CHG_GUN_STATUS_EVR'));
+    });
+    it('Should show register label if not found', () => {
+        const data = {
+            3: [0],
+        };
+        const registers = fromJS(data);
+
+        const sut = registerContainer({ document, registers, labels });
+            
+        assert(sut.outerHTML.includes('NO LABEL - 0x03'));
     });
     it('Should show data in hex', () => {
         const data = {
@@ -97,7 +107,7 @@ describe('Register Container', () => {
         };
         const registers = fromJS(data);
 
-        const sut = registerContainer({ document, registers, labels});;
+        const sut = registerContainer({ document, registers, labels });;
         assert(sut.outerHTML.includes('<td>0xff</td>'));
     });
 });

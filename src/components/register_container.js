@@ -12,7 +12,6 @@ export default function RegisterContainer({ document, registers, labels }) {
     const registerDataTitleText = domCreateText('Data');
     const registerTextTitle = domCreateEl('th');
     const registerTextTitleText = domCreateText('Text');
-
     const registerBody = domCreateEl('tbody');
 
     registerContainer.appendChild(registerHeader);
@@ -33,15 +32,17 @@ export default function RegisterContainer({ document, registers, labels }) {
     const toRow = e => '<tr>' + e + '</tr>';
     const toData = value => '<td>' + value + '</td>';
     const toHeader = value => '<td>' + value + '</td>';
-    const findLabel = (e,labels) => Object.entries(labels)[e];
+
     const noLabel = e => `NO LABEL - ${toHex(e)}`;
-    const toLabel = (e,labels) => findLabel(e,labels) ? findLabel(e,labels)[0] : noLabel(e);
+    const toLabel = (e,labels) => Object.entries(labels).filter(y => y[1] == e).map(z => z[0])[0] || noLabel(e);
     const toDataRow = x => x.map(e => toData(toHex(e))).toArray().join('');
- 
+    const toDisplayChar = x => x >= 0x20 && x <= 0x7e ? String.fromCharCode(x):'.';
+    const toTextRow = x => toData(x.map(e => toDisplayChar(e)).toArray().join(''));
+
     registerBody.innerHTML = Object.entries(
         registers.map((data, register) =>
             toRow(
-                toHeader(toLabel(register,labels) + toDataRow(data))))
+                toHeader(toLabel(register,labels) + toDataRow(data) + toTextRow(data))))
            .toJS())
            .map(x => x[1])
            .join('');

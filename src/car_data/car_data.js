@@ -17,7 +17,7 @@ export const CarDataStore = ({ database }) => {
 
     return {
 
-        updateRegister: message => {
+        store: message => {
             const { register, data } = message;
             const registers = _database().ref().child('registers').child(register);
 

@@ -13,7 +13,7 @@ const responseLabels = ({ database }) => {
         .map(e => e.val())
         .map(x => {
             return Object.assign(...Object.keys(x)
-                .filter(z => z.includes('_EVR', z.length - 4) && z.startsWith('KO_WF_'))
+                .filter(z => z.includes('_EVR', z.length - 4))
                 .map(y => ({ [y]: x[y] })));
         });
 }
