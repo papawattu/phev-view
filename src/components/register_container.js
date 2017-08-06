@@ -34,7 +34,7 @@ export default function RegisterContainer({ document, registers, labels }) {
     const toHeader = value => '<td>' + value + '</td>';
 
     const noLabel = e => `NO LABEL - ${toHex(e)}`;
-    const toLabel = (e,labels) => Object.entries(labels).filter(y => y[1] == e).map(z => z[0])[0] || noLabel(e);
+    const toLabel = (e,labels) => Object.entries(labels).filter(y => y[1] == e).map(z => z[0])[0] || noLabel;
     const toDataRow = x => x.map(e => toData(toHex(e))).toArray().join('');
     const toDisplayChar = x => x >= 0x20 && x <= 0x7e ? String.fromCharCode(x):'.';
     const toTextRow = x => toData(x.map(e => toDisplayChar(e)).toArray().join(''));
