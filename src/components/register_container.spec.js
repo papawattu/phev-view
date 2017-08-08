@@ -33,7 +33,7 @@ describe('Register Container', () => {
         const registers = fromJS(data);
 
         const sut = registerContainer({ document, registers, labels });
-        assert(sut.outerHTML.includes('<table>'));
+        assert(sut.outerHTML.includes('<table'));
         assert(sut.outerHTML.includes('</table>'));
     });
     it('Should have Register title', () => {
@@ -52,7 +52,7 @@ describe('Register Container', () => {
         const registers = fromJS(data);
 
         const sut = registerContainer({ document, registers, labels });
-        assert(sut.outerHTML.includes('<th>Data</th>'));
+        assert(sut.outerHTML.includes('Data</th>'));
     });
     it('Should have Text title', () => {
         const data = {

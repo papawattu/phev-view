@@ -1,7 +1,8 @@
 var path = require('path');
+var webpack = require('webpack');
 
 module.exports = {
-    entry: './src/index.js',
+    entry: ['bootstrap-loader', './src/index.js'],
     output: {
         path: path.resolve(__dirname, 'public'),
         filename: 'bundle.js',
@@ -22,5 +23,10 @@ module.exports = {
                 loader: 'babel-loader',
             }
         }]
-    }
+    },
+    plugins: [
+        new webpack.ProvidePlugin({
+            jQuery: 'jquery'
+        })
+    ],
 };

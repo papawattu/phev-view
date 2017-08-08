@@ -31,9 +31,9 @@ export default function (document) {
         registers({ database }),
         responseLabels({ database })
     ).subscribe(x => {
-        document.getElementById('root')
+        document.getElementById('registers')
             .innerHTML = '';
-        document.getElementById('root')
+        document.getElementById('registers')
             .appendChild(registerContainer({
                 document,
                 registers: x[1],
