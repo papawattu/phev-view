@@ -40,12 +40,8 @@ export default function RegisterContainer({ document, registers, labels }) {
     const maxDataLength = x => x.reduce((y,z) => z.size > y ? z.size : y ,0);
     const toDisplayChar = x => x >= 0x20 && x <= 0x7e ? String.fromCharCode(x):'.';
     const toTextRow = x => toData(x.map(e => toDisplayChar(e)).toArray().join(''));
-    const padToMax = (x,y) => {
-        console.log(x.length,y);
-        return x.length === y ? x : new Array().concat(x,new Array(y).fill(toData(''),x.length,y));
-        
-    };
-
+    const padToMax = (x,y) => x.length === y ? x : new Array().concat(x,new Array(y).fill(toData(''),x.length,y));
+    
     registerBody.innerHTML = Object.entries(
         registers.map((data, register) =>
             toRow(toHeader(toLabel(register,labels)) + padToMax(toDataRow(data),maxDataLength(registers)).join('') + toTextRow(data))).toJS())
