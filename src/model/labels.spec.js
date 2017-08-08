@@ -4,8 +4,6 @@ import { labels } from './labels';
 import database from '../database';
 import data from '../../data/request_response';
 
-import * as firebase from 'firebase';
-
 const assert = chai.assert;
 
 const sut = labels({database});

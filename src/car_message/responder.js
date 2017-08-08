@@ -1,11 +1,10 @@
-import * as Registers from './registers';
+import { registers } from './registers';
 
-const registers = Registers.registers;
 let sendAll = false;
 let _message = null;
 
 function start(response) {
-    if(response.command == 0x2f) {
+    if(response.command === 0x2f) {
         response.register = 0x01;
         response.data = Buffer.from([0]);
         response.length = 0x04;
@@ -18,7 +17,7 @@ function start(response) {
     }
 }
 function ping(response) {
-    if(response.command == 0xf9) {
+    if(response.command === 0xf9) {
         response.data = Buffer.from([0]);
 
     } else {
@@ -33,30 +32,27 @@ export function respond({command,length,type,data,register}) {
         type: !type & 1,
         register: register,
     };
-    if(response.command == 0xf2 || response.command == 0x2f) {
-        if(response.command == 0x2f) {
-            
-        }
+    if(response.command === 0xf2 || response.command === 0x2f) {
         return start(response);
     }
-    if(response.command == 0xf6) {
-        if(response.type == 0x01) { //get value ack
+    if(response.command === 0xf6) {
+        if(response.type === 0x01) { //get value ack
             response.data = Buffer.from([0]);
             response.length = 4;
             return response;
         } else {  // set value
-            registers.find(e => e.register == response.register).data = Array.from(response.data);
+            registers.find(e => e.register === response.register).data = Array.from(response.data);
             response.length = 4;
             return response;
         }
     } 
-    if(response.command == 0x6f) {
-        if(response.type == 0x01) {
-            const message = registers.find(e => e.register == response.register);
+    if(response.command === 0x6f) {
+        if(response.type === 0x01) {
+            const message = registers.find(e => e.register === response.register);
             if(message == null)  throw Error('Register not found ' + response.register);
             response.data = Buffer.from(message.data);
             response.length = message.data + 3;
-            if(message.register == 0xaa) {
+            if(message.register === 0xaa) {
                _message = sendRegisters();
                sendAll = true;
             }
@@ -65,7 +61,7 @@ export function respond({command,length,type,data,register}) {
             return null;
         }
     }
-    if(response.command == 0x9f) {
+    if(response.command === 0x9f) {
         return null;
         //return ping(response);
     }
@@ -87,7 +83,7 @@ export function *sendRegisters() {
         message.type = 0;
         message.data = registers[idx].sender(message);
         
-        if(registers[idx].initSend == undefined  || registers[idx].initSend) {
+        if(registers[idx].initSend === undefined  || registers[idx].initSend) {
             yield registers[idx].sender(message);
         }
         idx++;
