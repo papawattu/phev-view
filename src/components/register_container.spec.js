@@ -21,7 +21,7 @@ describe('Register Container', () => {
         };
         const registers = fromJS(data);
 
-        const sut = registerContainer({ document, registers, labels });
+        const sut = registerContainer({ dom: document, registers, labels });
         assert.isNotNull(sut);
     });
     it('Should return a table', () => {
@@ -32,7 +32,7 @@ describe('Register Container', () => {
 
         const registers = fromJS(data);
 
-        const sut = registerContainer({ document, registers, labels });
+        const sut = registerContainer({ dom: document, registers, labels });
         assert(sut.outerHTML.includes('<table'));
         assert(sut.outerHTML.includes('</table>'));
     });
@@ -42,7 +42,7 @@ describe('Register Container', () => {
 
         const registers = fromJS(data);
 
-        const sut = registerContainer({ document, registers, labels });
+        const sut = registerContainer({ dom: document, registers, labels });
         assert(sut.outerHTML.includes('<th>Register</th>'));
     });
     it('Should have Data title', () => {
@@ -51,7 +51,7 @@ describe('Register Container', () => {
 
         const registers = fromJS(data);
 
-        const sut = registerContainer({ document, registers, labels });
+        const sut = registerContainer({ dom: document, registers, labels });
         assert(sut.outerHTML.includes('Data</th>'));
     });
     it('Should have Text title', () => {
@@ -60,7 +60,7 @@ describe('Register Container', () => {
 
         const registers = fromJS(data);
 
-        const sut = registerContainer({ document, registers, labels });
+        const sut = registerContainer({ dom: document, registers, labels });
         assert(sut.outerHTML.includes('<th>Text</th>'));
     });
     it('Should handle empty registers', () => {
@@ -69,7 +69,7 @@ describe('Register Container', () => {
 
         const registers = fromJS(data);
 
-        const sut = registerContainer({ document, registers, labels });
+        const sut = registerContainer({ dom: document, registers, labels });
         assert(sut.outerHTML.includes('<tbody></tbody>'));
     });
     it('Should handle empty data', () => {
@@ -78,7 +78,7 @@ describe('Register Container', () => {
         };
         const registers = fromJS(data);
 
-        const sut = registerContainer({ document, registers, labels });
+        const sut = registerContainer({ dom: document, registers, labels });
         console.log(sut.outerHTML);
         assert(sut.outerHTML.includes('<th>KO_WF_OPTION_HTR_PRSNT_EVR</th><td></td>'));
     });
@@ -88,7 +88,7 @@ describe('Register Container', () => {
         };
         const registers = fromJS(data);
 
-        const sut = registerContainer({ document, registers, labels });
+        const sut = registerContainer({ dom: document, registers, labels });
             
         assert(sut.outerHTML.includes('KO_WF_CHG_GUN_STATUS_EVR'));
     });
@@ -98,7 +98,7 @@ describe('Register Container', () => {
         };
         const registers = fromJS(data);
 
-        const sut = registerContainer({ document, registers, labels });
+        const sut = registerContainer({ dom: document, registers, labels });
             
         assert(sut.outerHTML.includes('NO LABEL - 0x03'));
     });
@@ -108,7 +108,7 @@ describe('Register Container', () => {
         };
         const registers = fromJS(data);
 
-        const sut = registerContainer({ document, registers, labels });;
+        const sut = registerContainer({ dom: document, registers, labels });;
         assert(sut.outerHTML.includes('<td>0xff</td>'));
     });
 });

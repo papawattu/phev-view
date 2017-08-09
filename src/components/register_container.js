@@ -1,4 +1,4 @@
-export default function RegisterContainer({ document, registers, labels }) {
+export default function RegisterContainer({ dom, registers, labels }) {
 
     const toHex = dec => '0x' + (Number.parseInt(dec).toString(16).length < 2 ? 
         '0' + Number.parseInt(dec).toString(16) 
@@ -16,8 +16,8 @@ export default function RegisterContainer({ document, registers, labels }) {
     const toTextRow = x => toData(x.map(e => toDisplayChar(e)).toArray().join(''));
     const padToMax = (x,y,f) => x.length === y ? x : new Array().concat(x,new Array(y).fill(f,x.length,y));
     
-    const domCreateEl = e => document.createElement(e);
-    const domCreateText = e => document.createTextNode(e);
+    const domCreateEl = e => dom.createElement(e);
+    const domCreateText = e => dom.createTextNode(e);
 
     const registerContainer = domCreateEl('table');
     registerContainer.setAttribute('class','table table-bordered table-striped table-hover table-condensed');

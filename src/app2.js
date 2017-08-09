@@ -7,10 +7,9 @@ import registerContainer from './components/register_container';
 import database from './database';
 import Rx from 'rxjs/Rx';
 
-export default function (document) {
-
-    const store = CarDataStore({database});
-    const handler = CarMessageHandler({store});
+const setupMqttListener = ({mqtt, database}) => {
+    const store = CarDataStore({ database });
+    const handler = CarMessageHandler({ store });
     const client = mqtt.connect('wss://secure.wattu.com:8883/mqtt');
     client.subscribe('phev/receive');
 
@@ -26,19 +25,36 @@ export default function (document) {
         );
     });
 
+    return client;
+}
+
+const setupRegisterComponent = (dom) => {
     Rx.Observable.zip(
-        Rx.Observable.fromEvent(document, 'DOMContentLoaded'),
         registers({ database }),
         responseLabels({ database })
     ).subscribe(x => {
-        document.getElementById('registers')
+        dom.getElementById('registers')
             .innerHTML = '';
-        document.getElementById('registers')
+        dom.getElementById('registers')
             .appendChild(registerContainer({
-                document,
-                registers: x[1],
-                labels: x[2]
+                dom,
+                registers: x[0],
+                labels: x[1]
             }));
     });
+}
+
+const setupPage = () => {
+
+}
+export default function (dom) {
+
+    const domLoaded = Rx.Observable.fromEvent(dom, 'DOMContentLoaded')
+        .subscribe(() => {
+            setupRegisterComponent(dom);
+            setupMqttListener({mqtt, database});
+            setupPage(dom);
+        });
+
 
 }
