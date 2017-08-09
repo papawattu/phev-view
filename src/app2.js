@@ -54,22 +54,26 @@ const setupSummaryComponent = dom => {
         const sum = summary({ registers: e[0], labels: Immutable.fromJS(e[1]) });
         
         const templ = 
-`<div class="col-xs-3">
-    <div class="form-group row">
-        <label for="vin">VIN Number</label>
-        <input name="vin" type="text" class="form-control" readonly value="${sum.vin}"/>
-        <label for="ssid">SSID</label>
-        <input name="ssid" type="text" class="form-control" readonly value="${sum.ssid}"/>
-        <label for="ecuversion">ECU Version</label>
-        <input name="ecuversion" type="text" class="form-control" readonly value="${sum.ecuVersion}"/>
-    </div>
-</div>
-<div id="battery" class="col-sm-4">
+`<div class="container-fluid>   
+    <div class="container-fluid">Last Updated on ${sum.lastUpdated.toDateString()} at ${sum.lastUpdated.toLocaleTimeString()}</div>
+    <div id="battery" class="col-m-6">
         <h3>Battery</h3>
-    <div class="progress">
-        <div class="progress-bar" role="progressbar"  style="width:${sum.batteryLevel}%">${sum.batteryLevel}% Charged</div>
+        <div class="progress">
+            <div class="progress-bar" role="progressbar"  style="width:${sum.batteryLevel}%">${sum.batteryLevel}% Charged</div>
+        </div>
     </div>
-</div>`;
+    <div class="col-md-4">
+        <div class="form-group row">
+            <label for="vin">VIN Number</label>
+            <input name="vin" type="text" class="form-control" readonly value="${sum.vin}"/>
+            <label for="ssid">SSID</label>
+            <input name="ssid" type="text" class="form-control" readonly value="${sum.ssid}"/>
+            <label for="ecuversion">ECU Version</label>
+            <input name="ecuversion" type="text" class="form-control" readonly value="${sum.ecuVersion}"/>
+        </div>
+    </div>
+</div>`
+
 
         dom.innerHTML = templ;
     });

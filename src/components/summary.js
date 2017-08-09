@@ -6,7 +6,7 @@ function summary({ labels, registers }) {
         return data;
     }, {});
     const toString = (arr, s, e) => String.fromCharCode(...arr.slice(s, e));
-    const toDate = x => x;
+    const toDate = x => new Date(2000 + x[0],x[1]-1,x[2],x[3],x[4],x[5],x[6]);
     return {
         vin: toString(regs.KO_WF_VIN_INFO_EVR, 1, 18),
         ssid: toString(regs.KO_WF_SSID_EVR, 0, regs.KO_WF_SSID_EVR.findIndex(x => x === 0xff)),
