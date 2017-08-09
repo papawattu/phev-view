@@ -79,7 +79,6 @@ describe('Register Container', () => {
         const registers = fromJS(data);
 
         const sut = registerContainer({ dom: document, registers, labels });
-        console.log(sut.outerHTML);
         assert(sut.outerHTML.includes('<th>KO_WF_OPTION_HTR_PRSNT_EVR</th><td></td>'));
     });
     it('Should show register label', () => {

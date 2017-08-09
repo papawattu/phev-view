@@ -7,7 +7,7 @@ import registerContainer from './components/register_container';
 import database from './database';
 import Rx from 'rxjs/Rx';
 
-const setupMqttListener = ({mqtt, database}) => {
+const setupMqttListener = ({ mqtt, database }) => {
     const store = CarDataStore({ database });
     const handler = CarMessageHandler({ store });
     const client = mqtt.connect('wss://secure.wattu.com:8883/mqtt');
@@ -28,8 +28,8 @@ const setupMqttListener = ({mqtt, database}) => {
     return client;
 }
 
-const setupRegisterComponent = (dom) => {
-    Rx.Observable.zip(
+const setupRegisterComponent = dom => {
+    Rx.Observable.combineLatest(
         registers({ database }),
         responseLabels({ database })
     ).subscribe(x => {
@@ -44,16 +44,49 @@ const setupRegisterComponent = (dom) => {
     });
 }
 
-const setupPage = () => {
+const setupPage = dom => {
+
+    const domCreateEl = e => dom.createElement(e);
+    const domCreateText = e => dom.createTextNode(e);
+    const root = dom.getElementById('root');
+    
+    const registers = root => {
+        const registersDiv = domCreateEl('div');
+        registersDiv.setAttribute('id', 'registers');
+        registersDiv.setAttribute('class','container-fluid');
+        root.appendChild(registersDiv);
+    }
+
+    const header = root => {
+        const header = domCreateEl('h1');
+        header.appendChild(domCreateText('PHEV'));
+        root.appendChild(header);
+
+    }
+
+    const summary = root => {
+        const summaryDiv = domCreateEl('div');
+        summaryDiv.setAttribute('id', 'summary');
+        summaryDiv.setAttribute('class','container-fluid');
+        root.appendChild(summaryDiv);
+        
+
+    }
+    header(root);
+    summary(root);
+    registers(root);
 
 }
 export default function (dom) {
 
+    const client = setupMqttListener({ mqtt, database });
+            
     const domLoaded = Rx.Observable.fromEvent(dom, 'DOMContentLoaded')
         .subscribe(() => {
+            domLoaded.unsubscribe();
             setupRegisterComponent(dom);
-            setupMqttListener({mqtt, database});
             setupPage(dom);
+
         });
 
 
