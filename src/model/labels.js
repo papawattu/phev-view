@@ -11,10 +11,8 @@ const responseLabels = ({ database }) => {
     return Rx.Observable
         .fromEvent(database().ref('/codes/'), 'value')
         .map(e => e.val())
-        .map(x => {
-            return Object.assign(...Object.keys(x)
+        .map(x => Object.assign(...Object.keys(x)
                 .filter(z => z.includes('_EVR', z.length - 4))
-                .map(y => ({ [y]: x[y] })));
-        });
+                .map(y => ({ [y]: x[y] }))));
 }
 export { labels, responseLabels };
