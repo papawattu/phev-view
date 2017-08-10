@@ -8,6 +8,7 @@ import registerContainer from './components/register_container';
 import database from './database';
 import Rx from 'rxjs/Rx';
 import Immutable from 'immutable';
+import { encode } from './car_message/encoder_decoder';
 
 const setupMqttListener = ({ mqtt, database }) => {
     const store = CarDataStore({ database });
@@ -22,10 +23,9 @@ const setupMqttListener = ({ mqtt, database }) => {
                 .map(handler.store)
                 .map(handler.respond)
                 .map(handler.encode));
-        
+
         client.publish('phev/send', response);
-        
-        console.log('Response ' + JSON.stringify(response));
+
     });
     return client;
 }
@@ -82,10 +82,11 @@ const setupSummaryComponent = dom => {
 const setupControls = dom => {
     const domCreateEl = e => dom.createElement(e);
     const domCreateText = e => dom.createTextNode(e);
-    
-    dom.innerHTML = 
-`<button type="button" class="btn">AC On</button>`
-}; 
+
+    dom.innerHTML =
+        `<button id ="ac" type="button" class="btn btn-primary">AC On</button>`
+
+};
 
 const setupPage = dom => {
 
@@ -129,8 +130,6 @@ const setupPage = dom => {
     controls(root);
     summary(root);
     registers(root);
-    
-
 };
 export default function (dom) {
 
@@ -141,8 +140,14 @@ export default function (dom) {
             domLoaded.unsubscribe();
             setupRegisterComponent(dom);
             setupPage(dom);
-
+            Rx.Observable.fromEvent(document.getElementById('ac'), 'click')
+                .subscribe(e => {
+                    const message = {};
+                    message.command = 0xf6;
+                    message.register = 4;
+                    message.data = Buffer.from([1]);
+                    client.publish('phev/send', encode(message));
+                    console.log('click');
+                });
         });
-
-
 }
