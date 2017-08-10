@@ -16,17 +16,17 @@ const setupMqttListener = ({ mqtt, database }) => {
     client.subscribe('phev/receive');
 
     client.on('message', (topic, messages) => {
-        client.publish('phev/send',
-            handler.join(
-                handler.split(messages)
-                    .map(handler.decode)
-                    .map(handler.store)
-                    .map(handler.respond)
-                    .map(handler.encode)
-            )
-        );
+        const response = handler.join(
+            handler.split(messages)
+                .map(handler.decode)
+                .map(handler.store)
+                .map(handler.respond)
+                .map(handler.encode));
+        
+        client.publish('phev/send', response);
+        
+        console.log('Response ' + JSON.stringify(response));
     });
-
     return client;
 }
 
@@ -52,9 +52,9 @@ const setupSummaryComponent = dom => {
         responseLabels({ database })
     ).subscribe(e => {
         const sum = summary({ registers: e[0], labels: Immutable.fromJS(e[1]) });
-        
-        const templ = 
-`<div class="container-fluid>   
+
+        const templ =
+            `<div class="container-fluid>   
     <div class="container-fluid">Last Updated on ${sum.lastUpdated.toDateString()} at ${sum.lastUpdated.toLocaleTimeString()}</div>
     <div id="battery" class="col-m-6">
         <h3>Battery</h3>
@@ -78,6 +78,14 @@ const setupSummaryComponent = dom => {
         dom.innerHTML = templ;
     });
 };
+
+const setupControls = dom => {
+    const domCreateEl = e => dom.createElement(e);
+    const domCreateText = e => dom.createTextNode(e);
+    
+    dom.innerHTML = 
+`<button type="button" class="btn">AC On</button>`
+}; 
 
 const setupPage = dom => {
 
@@ -108,9 +116,20 @@ const setupPage = dom => {
         setupSummaryComponent(summaryDiv);
 
     };
+
+    const controls = root => {
+        const controlsDiv = domCreateEl('div');
+        controlsDiv.setAttribute('id', 'controls');
+        controlsDiv.setAttribute('class', 'container-fluid');
+
+        setupControls(controlsDiv);
+        root.appendChild(controlsDiv);
+    };
     header(root);
+    controls(root);
     summary(root);
     registers(root);
+    
 
 };
 export default function (dom) {

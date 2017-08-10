@@ -70,7 +70,7 @@ function sendCommand(register, value, validationError) {
   message.command = 0xf6;
   message.register = parseInt(registerInput.value, 16);
   message.data = Buffer.from([parseInt(valueInput.value, 16)]);
-  client.publish('phev/send', EncoderDecoder.encode(message)); F
+  client.publish('phev/send', EncoderDecoder.encode(message)); 
 }
 function sendCommandComponent(root) {
   const element = document.createElement('div');
