@@ -1,3 +1,4 @@
+import Rx from 'rxjs/Rx';
 import * as firebase from 'firebase';
 
 const config = {
@@ -13,4 +14,9 @@ if (!firebase.apps.length) {
     firebase.initializeApp(config);
 }
 
-export default firebase.database;;
+const $register = Rx.Observable.fromEvent(firebase.database().ref('/registers/'), 'value');
+const $labels = Rx.Observable.fromEvent(firebase.database().ref('/codes/'), 'value');
+
+export { $register,$labels } ;
+
+export default firebase.database;
