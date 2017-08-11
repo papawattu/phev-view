@@ -187,6 +187,13 @@ export const registers = [
         sender: returnData,
     },
     {
+        register: 0x04,
+        data: [0x00],
+        responder: acknowledge,
+        sender: returnData,
+        initSend: false,
+    },
+    {
         register: 0x0a,
         data: [0x00],
         responder: acknowledge,

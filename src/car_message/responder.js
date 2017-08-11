@@ -41,7 +41,11 @@ export function respond({command,length,type,data,register}) {
             response.length = 4;
             return response;
         } else {  // set value
-            registers.find(e => e.register === response.register).data = Array.from(response.data);
+            //const reg = registers.find(e => e.register === response.register);
+            //if(reg === undefined) {
+            //    throw Error('Undefinded register ' + register);
+            //}
+            response.data = Buffer.from([0]);
             response.length = 4;
             return response;
         }
