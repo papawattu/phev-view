@@ -84,7 +84,9 @@ const setupControls = dom => {
     const domCreateText = e => dom.createTextNode(e);
 
     dom.innerHTML =
-        `<button id ="ac" type="button" class="btn btn-primary">AC On</button>`
+        `<button id ="connect" type="button" class="btn btn-default">Connect</button>
+        <button id ="ac" type="button" class="btn btn-default">AC On</button>
+        <button id ="headlights" type="button" class="btn btn-default">Head Lights On</button>`
 
 };
 
@@ -147,7 +149,23 @@ export default function (dom) {
                     message.register = 4;
                     message.data = Buffer.from([1]);
                     client.publish('phev/send', encode(message));
-                    console.log('click');
+                    console.log('click ac');
                 });
+            Rx.Observable.fromEvent(document.getElementById('headlights'), 'click')
+                .subscribe(e => {
+                    const message = {};
+                    message.command = 0xf6;
+                    message.register = 10;
+                    message.data = Buffer.from([1]);
+                    client.publish('phev/send', encode(message));
+                    console.log('click head lights');
+                });
+            Rx.Observable.fromEvent(document.getElementById('connect'), 'click')
+                .subscribe(e => {
+                    client.publish('phev/send', Buffer.from([0xf2, 0x0a, 0x00, 0x01, 0x02, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0xff]));
+                    console.log('click connect');
+                });
+
+                
         });
 }
