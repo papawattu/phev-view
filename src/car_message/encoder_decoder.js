@@ -58,7 +58,7 @@ const decode = message => {
     return { command, length, type, register, data, checksum };
 }
 const encode = command => {
-    if (command == null) return null;
+    if (command === null) return null;
     const message = Buffer.alloc(command.data.length + 5);
     message[0] = command.command;
     message[1] = command.data.length + 3;
