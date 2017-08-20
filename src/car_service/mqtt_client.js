@@ -1,12 +1,18 @@
-import { Obserable } from 'rxjs'
-import { sendTopic, mqttUri, mqtt } from '../config'
+import { Observable } from 'rxjs'
+import { mqttUri, mqtt } from '../config'
 
 const connect = uri => mqtt.connect(uri)
 
 const client = client || connect(mqttUri)
 
-const send = message => client.publish(sendTopic,message) ? message : message
+const send = (topic, message) => client.publish(topic, message) ? message : message
 
-const messages = () => Obserable.fromEvent(client,'message')
+const subscribe = topic => client.subscribe(topic)
 
-export { send }
+const unsubscribe = topic => client.unsubscribe(topic)
+
+const observeEvent = ev => Observable.fromEvent(client, ev, (topic, message) => ({topic, message}))  
+
+const messages = topic => observeEvent('message').filter(x => x.topic === topic)
+
+export { send, messages, subscribe, unsubscribe }

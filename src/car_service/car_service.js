@@ -1,6 +1,7 @@
 import { Observable } from 'rxjs'
-import { encode } from '../car_message/encoder_decoder'
-import { send } from './mqtt_client'
+import { encode, popMessage } from '../car_message/encoder_decoder'
+import { send, messages, subscribe, unsubscribe } from './mqtt_client'
+import { sendTopic, receiveTopic } from '../config'
 
 const PING_SEND_CMD = 0xf9
 const PING_RESP_CMD = 0x9f
@@ -21,24 +22,19 @@ const createPingRequest = num => {
 }
 
 const ping = props => {
-    const { interval, sendToQueue } = props
+    const { interval } = props
     return new Observable.interval(interval)
         .map(x => x % 100)
         .map(x => createPingRequest(x))
         .map(x => encode(x))
-        .map(x => send(x))
+        .map(x => sendMessage(x))
 }
 
-const pong = () => {
-    return new Observable(obv => {
-        const t = setTimeout(() => {
-            obv.next(counter(count))
-        }, 1000)
-    })
+const sendMessage = message => send(sendTopic,message)
+
+const receivedMessages = () => {
+    subscribe(receiveTopic)
+    return messages(receiveTopic).map(x => x.message)
 }
 
-const counter = x => x < 99 ? x + 1 : 0
-
-const pingPong = props => ping(props)
-
-export { pingPong }
+export { receivedMessages, sendMessage }

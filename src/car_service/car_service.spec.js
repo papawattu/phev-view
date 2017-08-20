@@ -1,22 +1,33 @@
 import chai from 'chai';
 import sinon from 'sinon';
-import { pingPong } from './car_service';
+import { send, messages, subscribe, unsubscribe } from './mqtt_client'
+import { sendMessage, receivedMessages } from './car_service'
 
 const assert = chai.assert;
 
-const props = {}
+describe('Car service',() => {
+    it('Should send message',() => {
 
-props.sendToQueue = sinon.stub().returnsArg(1)
-props.interval = 1000
+        const sub = messages('phev/send')
+        subscribe('phev/send')
 
-const sut = pingPong(props)
+        const s = sub.subscribe(x => {
+            assert.deepEqual(x.message,Buffer.from([0xf6,0x05,0x00,0x01,0x01,0x00]))
+            s.unsubscribe()
+            unsubscribe('phev/send')
+        })
+        sendMessage(Buffer.from([0xf6,0x05,0x00,0x01,0x01,0x00]))
 
-describe('PingPong',() => {
-    it('Should ping',(done) => {
-        const sub = sut.subscribe(message => {
-            assert.deepEqual(message,new Buffer.from([0xf9,0x04,0x00,0x00,0x00,0xfd]))
-            sub.unsubscribe()
+
+    })
+    it('Should receive message',(done) => {
+        const sub = receivedMessages()
+        sub.subscribe(x => {
+            assert.deepEqual(x, Buffer.from([0xf6,0x05,0x00,0x01,0x01,0x00]))
             done()
         })
+
+        send('phev/receive',Buffer.from([0xf6,0x05,0x00,0x01,0x01,0x00]))
+
     })
 })

@@ -1,17 +1,22 @@
 import chai from 'chai';
 import sinon from 'sinon';
 //import mqtt from 'mqtt'
-import { send } from './mqtt_client';
+import { subscribe, send, messages, unsubscribe } from './mqtt_client';
 
 const assert = chai.assert;
 
 
-describe('send', () => {
+describe('mqtt wrapper', () => {
     
-    it('Should send', () => {
-        assert.deepEqual(send(Buffer.from([1, 2, 3, 4])), Buffer.from([1, 2, 3, 4]))
-    })
-    it('Should send', () => {
-        assert.deepEqual(send(Buffer.from([1, 2, 3, 4])), Buffer.from([1, 2, 3, 4]))
+    it('Should send and receive buffer', (done) => {
+        
+        subscribe('test')
+        const sub = messages('test').subscribe(x => {
+            assert.deepEqual(x.message,Buffer.from([0,1,2,3,4]),'expected "test" got ' + x)
+            sub.unsubscribe();
+            unsubscribe('test')
+            done()
+        })
+        send('test',Buffer.from([0,1,2,3,4]))
     })
 })
