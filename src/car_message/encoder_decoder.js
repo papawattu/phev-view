@@ -80,4 +80,11 @@ const generateChecksum = data => {
     return checksum;
 }
 
-export { generateChecksum, encode, decode, extract, findCommand, popMessage }
+const toMessageArray = (messages,current) => {
+    const arr = current || []
+    
+    return messages.length > 0
+        ? toMessageArray(Buffer.from(messages.slice(arr[arr.push(extract(messages))-1].length,messages.length)),arr)
+        : arr || []
+}
+export { generateChecksum, encode, decode, extract, findCommand, popMessage, toMessageArray }

@@ -1,5 +1,5 @@
 import { Observable } from 'rxjs'
-import { encode, popMessage } from '../car_message/encoder_decoder'
+import { encode, toMessageArray } from '../car_message/encoder_decoder'
 import { send, messages, subscribe, unsubscribe } from './mqtt_client'
 import { sendTopic, receiveTopic } from '../config'
 
@@ -37,4 +37,6 @@ const receivedMessages = () => {
     return messages(receiveTopic).map(x => x.message)
 }
 
-export { receivedMessages, sendMessage }
+const splitMessages = () => receivedMessages().flatMap(x => toMessageArray(x))
+
+export { receivedMessages, sendMessage,splitMessages }

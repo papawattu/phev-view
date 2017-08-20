@@ -87,6 +87,20 @@ describe('Checksum', () => {
         assert.equal(checksum, 0xdd);
     });
 });
+describe('To message array', () => {
+    it('Should return array of split messages', () => {
+        const arr = EncoderDecoder.toMessageArray(doubleMessage)
+        assert.isArray(arr)
+        assert.equal(arr.length,2)
+        assert.deepEqual(arr[0],singleMessage)
+        assert.deepEqual(arr[1],singleMessage)
+        
+    });
+    it('Should return array of split messages with one message', () => {
+        const arr = EncoderDecoder.toMessageArray(singleMessage)
+        assert.isArray(arr)
+    });
+});
 describe('Find command', () => {
     it('Should find command', () => {
         const idx = EncoderDecoder.findCommand(singleMessage);
