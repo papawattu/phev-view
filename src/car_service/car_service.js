@@ -1,5 +1,6 @@
 import { Observable } from 'rxjs'
 import { encode } from '../car_message/encoder_decoder'
+import { send } from './mqtt_client'
 
 const PING_SEND_CMD = 0xf9
 const PING_RESP_CMD = 0x9f
@@ -25,7 +26,7 @@ const ping = props => {
         .map(x => x % 100)
         .map(x => createPingRequest(x))
         .map(x => encode(x))
-        .map(x => sendToQueue(x))
+        .map(x => send(x))
 }
 
 const pong = () => {

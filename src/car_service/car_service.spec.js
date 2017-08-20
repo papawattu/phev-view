@@ -14,10 +14,7 @@ const sut = pingPong(props)
 describe('PingPong',() => {
     it('Should ping',(done) => {
         const sub = sut.subscribe(message => {
-            console.log(message)
-            assert.equal(message)
-            console.log(props.sendToQueue.calledWith(message));
-            assert(props.sendToQueue.withArgs(new Buffer.from([0xf9])))
+            assert.deepEqual(message,new Buffer.from([0xf9,0x04,0x00,0x00,0x00,0xfd]))
             sub.unsubscribe()
             done()
         })
