@@ -21,14 +21,15 @@ const createPingRequest = num => {
     return request
 }
 
-const ping = props => {
-    const { interval } = props
-    return new Observable.interval(interval)
+const pingMessage = num => encode(createPingRequest(num))
+
+const pingInterval = interval => new Observable.interval(interval)
         .map(x => x % 100)
-        .map(x => createPingRequest(x))
-        .map(x => encode(x))
-        .map(x => sendMessage(x))
-}
+        .map(x => pingMessage(x))
+
+const startPing = () => pingInterval().subscribe(message => sendMessage(message))
+
+const stopPing = subscription => subscription.unsubscribe()
 
 const sendMessage = message => send(sendTopic,message)
 
