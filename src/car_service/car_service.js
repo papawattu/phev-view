@@ -27,7 +27,7 @@ const pingInterval = interval => new Observable.interval(interval)
         .map(x => x % 100)
         .map(x => pingMessage(x))
 
-const startPing = interval => pingInterval(interval).subscribe(message => sendMessage(message))
+const startPing = (interval, timeout) => pingInterval(interval).subscribe(message => reply(sendMessage(message),timeout))
 
 const stopPing = subscription => subscription.unsubscribe()
 
@@ -36,10 +36,31 @@ const sendMessage = message => send(sendTopic,message)
 const receivedMessages = () => {
     subscribe(receiveTopic)
     return messages(receiveTopic).map(x => x.message)
+    
 }
 
 const splitMessages = () => receivedMessages().flatMap(x => toMessageArray(x))
 
 const decodedMessages = () => splitMessages().map(x => decode(x))
 
-export { receivedMessages, sendMessage, splitMessages, decodedMessages }
+const swapNibble = byte => ((byte & 0xf) << 4) | ((byte & 0xf0) >> 4) 
+
+const generateChecksum = data => data.reduce((y, x) => y + x & 0xff,0)
+
+const expectedResponse = message => {
+    const response = {}
+
+    response.command = swapNibble(message.command) 
+    response.type = !message.type & 1
+    response.register = message.register
+    response.length = 4
+    response.data = Buffer.from([0])  
+    
+    return response
+}
+
+const reply = (message, timeout) => decodedMessages()
+    .filter(x => encode(expectedResponse(message)).equals(encode(x)))
+    .timeout(timeout)
+
+export { reply, generateChecksum, expectedResponse, receivedMessages, sendMessage, splitMessages, decodedMessages, startPing }
