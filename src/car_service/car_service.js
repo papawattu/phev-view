@@ -1,5 +1,5 @@
 import { Observable } from 'rxjs'
-import { encode, toMessageArray } from '../car_message/encoder_decoder'
+import { encode, decode, toMessageArray } from '../car_message/encoder_decoder'
 import { send, messages, subscribe, unsubscribe } from './mqtt_client'
 import { sendTopic, receiveTopic } from '../config'
 
@@ -27,7 +27,7 @@ const pingInterval = interval => new Observable.interval(interval)
         .map(x => x % 100)
         .map(x => pingMessage(x))
 
-const startPing = () => pingInterval().subscribe(message => sendMessage(message))
+const startPing = interval => pingInterval(interval).subscribe(message => sendMessage(message))
 
 const stopPing = subscription => subscription.unsubscribe()
 
@@ -40,4 +40,6 @@ const receivedMessages = () => {
 
 const splitMessages = () => receivedMessages().flatMap(x => toMessageArray(x))
 
-export { receivedMessages, sendMessage,splitMessages }
+const decodedMessages = () => splitMessages().map(x => decode(x))
+
+export { receivedMessages, sendMessage, splitMessages, decodedMessages }

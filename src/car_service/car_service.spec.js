@@ -1,7 +1,7 @@
 import chai from 'chai';
 import sinon from 'sinon';
 import { send, messages, subscribe, unsubscribe } from './mqtt_client'
-import { sendMessage, receivedMessages, splitMessages } from './car_service'
+import { sendMessage, receivedMessages, splitMessages, decodedMessages } from './car_service'
 
 const assert = chai.assert;
 
@@ -41,6 +41,24 @@ describe('Car service',() => {
                 assert.deepEqual(x, Buffer.from([0xf6,0x05,0x00,0x01,0x01,0x00,0x78]))
                 done()
             }
+        })
+
+        send('phev/receive',Buffer.from([0xf6,0x05,0x00,0x01,0x01,0x00,0x76,0xf6,0x05,0x00,0x01,0x01,0x00,0x78]))
+
+    })
+    it('Should receive decoded messages',(done) => {
+        const sub = decodedMessages()
+        const s = sub.subscribe(x => {
+            assert.deepEqual(x,  
+                { 
+                    command: 0xf6,
+                    length: 5,
+                    type: 0,
+                    register: 1,
+                    data: Buffer.from([1,0]),
+                    checksum : 0x76
+                })
+            done()
         })
 
         send('phev/receive',Buffer.from([0xf6,0x05,0x00,0x01,0x01,0x00,0x76,0xf6,0x05,0x00,0x01,0x01,0x00,0x78]))
