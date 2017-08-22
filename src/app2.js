@@ -9,6 +9,14 @@ import database from './database';
 import Rx from 'rxjs/Rx';
 import Immutable from 'immutable';
 import { encode } from './car_message/encoder_decoder';
+import * as carService from './car_service/car_service'
+
+const pingSub = carService.startPing(3000, 5000).subscribe(x => {
+    x.subscribe(y => console.log('+++' + y), err => { 
+        console.log('Error1 ' + err)
+        pingSub.unsubscribe()
+    }) 
+})
 
 const setupMqttListener = ({ mqtt, database }) => {
     const store = CarDataStore({ database });
@@ -135,7 +143,7 @@ const setupPage = dom => {
 };
 export default function (dom) {
 
-    const client = setupMqttListener({ mqtt, database });
+    const client = null //setupMqttListener({ mqtt, database });
 
     const domLoaded = Rx.Observable.fromEvent(dom, 'DOMContentLoaded')
         .subscribe(() => {
@@ -166,6 +174,6 @@ export default function (dom) {
                     console.log('click connect');
                 });
 
-                
+
         });
 }

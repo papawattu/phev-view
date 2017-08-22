@@ -14,21 +14,19 @@ const EMPTY_DATA = Buffer.from([0]);
 
 const pingMessage = num => sendMessage(encode(createPingRequest(num)))
 
-const pingInterval = interval => new Observable.interval(interval)
+const pingInterval = interval => new Observable
+        .interval(interval)
         .map(x => x % 100)
-        .do(x => pingMessage(x))
-        .take(10)
+        .do(x => pingMessage(0))
 
 const pingOk = () => console.log('ping ok')
 
 const pingTimeout = err => console.log('ping timeout ' + err)
 
-const startPing = (interval, timeout) => {
-    return pingInterval()
-        .do(x => reply(createPingRequest(x)))
-        //.subscribe(x => console.log('>>>' + x))
-}
-
+const startPing = (interval, timeout) => pingInterval(interval)
+    .do(x => console.log('###' + x))
+    .map(x => reply(createPingRequest(0)),timeout)
+    
 const stopPing = subscription => subscription.unsubscribe()
 
 const sendMessage = message => send(sendTopic,message)
