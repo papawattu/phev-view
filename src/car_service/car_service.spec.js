@@ -146,7 +146,19 @@ describe('Car service', () => {
                 data: Buffer.from([0]),
             })
     })
-    it('Should start pinging', () => {
-        startPing(3000, 2000)
+    it('Should start pinging', (done) => {
+        const sub = startPing(300, 200).subscribe(x => { 
+            console.log('*** ' + JSON.stringify(x))
+         //   done();
+        })
+        setTimeout(() => {
+            sub.unsubscribe()
+            done()
+        },1000) 
+        process.nextTick(() => send('phev/receive', Buffer.from([0x9f, 0x04, 0x01, 0xff, 0x06, 0xaa])))
+        process.nextTick(() => send('phev/receive', Buffer.from([0x9f, 0x04, 0x01, 0xfe, 0x06, 0xaa])))
+        process.nextTick(() => send('phev/receive', Buffer.from([0x9f, 0x04, 0x01, 0xfd, 0x06, 0xaa])))
+        process.nextTick(() => send('phev/receive', Buffer.from([0x9f, 0x04, 0x01, 0x00, 0x06, 0xaa])))
+        
     })
 })

@@ -8,4 +8,8 @@ client.subscribe = topic => undefined
 client.unsubscribe = topic => undefined
 stub_mqtt.connect = () => client
 
+client.on('message', (topic, message) => {
+    console.log(`topic ${topic} - message = ${message.toString('hex')}`)
+})
+
 export default stub_mqtt 

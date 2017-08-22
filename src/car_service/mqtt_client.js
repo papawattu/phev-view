@@ -5,7 +5,7 @@ const connect = uri => mqtt.connect(uri)
 
 const client = client || connect(mqttUri)
 
-const send = (topic, message) => client.publish(topic, message) ? message : message
+const send = (topic, message) => { client.publish(topic, message); return message }
 
 const subscribe = topic => client.subscribe(topic)
 
