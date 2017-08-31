@@ -1,8 +1,12 @@
 import chai from 'chai';
 import sinon from 'sinon';
+import { Observable } from 'rxjs'
 import { send, messages, subscribe, unsubscribe } from './mqtt_client'
-import { reply, sendMessage, receivedMessages, splitMessages, 
-    decodedMessages, expectedResponse, generateChecksum, generateChecksum2, startPing } from './car_service'
+import {
+    pingInterval, pingMessage, reply, sendMessage, receivedMessages, splitMessages,
+    decodedMessages, expectedResponse, generateChecksum, generateChecksum2, startPing,
+    pingResponseMessages
+} from './car_service'
 
 const assert = chai.assert;
 
@@ -88,13 +92,13 @@ describe('Car service', () => {
     })
     it('Should return response', (done) => {
         const sub = reply({
-                    command: 0xf6,
-                    length: 4,
-                    type: 0,
-                    register: 1,
-                    data: Buffer.from([0]),
-                    checksum: 0x76
-                },2000)
+            command: 0xf6,
+            length: 4,
+            type: 0,
+            register: 1,
+            data: Buffer.from([0]),
+            checksum: 0x76
+        }, 2000)
         const s = sub.subscribe(x => {
             assert.deepEqual(x,
                 {
@@ -114,16 +118,19 @@ describe('Car service', () => {
     })
     it('Should timeout response', (done) => {
         const sub = reply({
-                    command: 0xf6,
-                    length: 4,
-                    type: 0,
-                    register: 1,
-                    data: Buffer.from([0]),
-                    checksum: 0x76
-                },50)
+            command: 0xf6,
+            length: 4,
+            type: 0,
+            register: 1,
+            data: Buffer.from([0]),
+            checksum: 0x76
+        }, 50)
         const s = sub.subscribe(
             x => assert.fail()
-            ,err => done())
+            , err => {
+                done()
+                sub.unsubscribe()
+            })
 
     })
     it('Should create expected reponse', () => {
@@ -146,19 +153,51 @@ describe('Car service', () => {
                 data: Buffer.from([0]),
             })
     })
-    it('Should start pinging', (done) => {
-        const sub = startPing(300, 200).subscribe(x => { 
-            console.log('*** ' + JSON.stringify(x))
-         //   done();
+    it('Should start pinging then timeout ', (done) => {
+
+        const sub = startPing(10, 1000).subscribe(x => {
+            assert.fail('Should not get here')
+            done()
+        },()=> {
+            done()
+        },() => {
+            assert.fail('Should not get here')
+            console.log('Complete')
+            done()
         })
-        setTimeout(() => {
+
+        const test = new Observable.interval(10)
+            .delay(10)
+            .map(x => x % 100)
+            .take(101)
+            .subscribe(x => {
+                send('phev/receive', Buffer.from([0x9f, 0x04, 0x01, x, 0x06, 0xaa]))
+            })
+    })
+    it('Should return ping respone', (done) => {
+
+        const sub = pingResponseMessages(0).subscribe(x => {
             sub.unsubscribe()
             done()
-        },1000) 
-        process.nextTick(() => send('phev/receive', Buffer.from([0x9f, 0x04, 0x01, 0xff, 0x06, 0xaa])))
-        process.nextTick(() => send('phev/receive', Buffer.from([0x9f, 0x04, 0x01, 0xfe, 0x06, 0xaa])))
-        process.nextTick(() => send('phev/receive', Buffer.from([0x9f, 0x04, 0x01, 0xfd, 0x06, 0xaa])))
-        process.nextTick(() => send('phev/receive', Buffer.from([0x9f, 0x04, 0x01, 0x00, 0x06, 0xaa])))
-        
+        })
+
+        send('phev/receive', Buffer.from([0x9f, 0x04, 0x01, 0x00, 0x06, 0xaa]))
+
+    })
+    it('Should return ping respone', (done) => {
+
+        const sub = pingInterval(100)
+            .take(1)
+            .subscribe(x => {
+                assert(x === 0)
+            })
+        const sub2 = pingResponseMessages()
+            .subscribe(x => {
+                assert(x === 0)
+                done()
+            })
+
+        send('phev/receive', Buffer.from([0x9f, 0x04, 0x01, 0x00, 0x06, 0xaa]))
+
     })
 })

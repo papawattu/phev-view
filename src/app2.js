@@ -11,20 +11,35 @@ import Immutable from 'immutable';
 import { encode } from './car_message/encoder_decoder';
 import * as carService from './car_service/car_service'
 
-const pingSub = carService.startPing(3000, 5000).subscribe(x => {
-    x.subscribe(y => console.log('+++' + y), err => { 
-        console.log('Error1 ' + err)
-        pingSub.unsubscribe()
-    }) 
+const pingSub = carService.startPing(1000, 5000)
+    .retryWhen(errors => errors
+        //log error message
+        .do(err => console.log('Ping ' + err + ' restarting in 5 seconds'))
+        //restart in 5 seconds
+        .delayWhen(val => Rx.Observable.timer(5000))
+    )
+    .subscribe(x => {
+        x.subscribe(y => console.log('+++' + y), err => {
+            console.log('Error1 ' + err)
+            pingSub.unsubscribe()
+        })
+    })
+
+carService.commandMessages().subscribe(msg => {
+    console.log(msg)
+    carService.sendMessage(encode(carService.expectedResponse(msg)))
 })
 
+//carService.pingTest(1000,1000).subscribe(x => console.log(x))
 const setupMqttListener = ({ mqtt, database }) => {
     const store = CarDataStore({ database });
     const handler = CarMessageHandler({ store });
     const client = mqtt.connect('wss://secure.wattu.com:8883/mqtt');
     client.subscribe('phev/receive');
-
+    console.log('got here')
     client.on('message', (topic, messages) => {
+        console.log('got message' )
+        
         const response = handler.join(
             handler.split(messages)
                 .map(handler.decode)
@@ -143,7 +158,7 @@ const setupPage = dom => {
 };
 export default function (dom) {
 
-    const client = null //setupMqttListener({ mqtt, database });
+    const client = null // setupMqttListener({ mqtt, database });
 
     const domLoaded = Rx.Observable.fromEvent(dom, 'DOMContentLoaded')
         .subscribe(() => {
@@ -156,7 +171,7 @@ export default function (dom) {
                     message.command = 0xf6;
                     message.register = 4;
                     message.data = Buffer.from([1]);
-                    client.publish('phev/send', encode(message));
+                    carService.sendMessage(encode(message));
                     console.log('click ac');
                 });
             Rx.Observable.fromEvent(document.getElementById('headlights'), 'click')
@@ -165,12 +180,12 @@ export default function (dom) {
                     message.command = 0xf6;
                     message.register = 10;
                     message.data = Buffer.from([1]);
-                    client.publish('phev/send', encode(message));
+                    carService.sendMessage(encode(message));
                     console.log('click head lights');
                 });
             Rx.Observable.fromEvent(document.getElementById('connect'), 'click')
                 .subscribe(e => {
-                    client.publish('phev/send', Buffer.from([0xf2, 0x0a, 0x00, 0x01, 0x02, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0xff]));
+                    carService.sendMessage(Buffer.from([0xf2, 0x0a, 0x00, 0x01, 0x02, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0xff]));
                     console.log('click connect');
                 });
 
