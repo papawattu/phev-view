@@ -1,6 +1,6 @@
 import { Observable } from 'rxjs'
 import { encode, decode, toMessageArray } from '../car_message/encoder_decoder'
-import { send, messages, subscribe, unsubscribe } from './mqtt_client'
+import { send, messages, subscribe, unsubscribe } from 'phev-mqtt'
 import { sendTopic, receiveTopic } from '../config'
 
 const PING_SEND_CMD = 0xf9

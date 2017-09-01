@@ -24,35 +24,12 @@ const pingSub = carService.startPing(1000, 5000)
             pingSub.unsubscribe()
         })
     })
-
+const store = CarDataStore({ database });
+const handler = CarMessageHandler({ store });
 carService.commandMessages().subscribe(msg => {
-    console.log(msg)
+    handler.store(msg)
     carService.sendMessage(encode(carService.expectedResponse(msg)))
 })
-
-//carService.pingTest(1000,1000).subscribe(x => console.log(x))
-const setupMqttListener = ({ mqtt, database }) => {
-    const store = CarDataStore({ database });
-    const handler = CarMessageHandler({ store });
-    const client = mqtt.connect('wss://secure.wattu.com:8883/mqtt');
-    client.subscribe('phev/receive');
-    console.log('got here')
-    client.on('message', (topic, messages) => {
-        console.log('got message' )
-        
-        const response = handler.join(
-            handler.split(messages)
-                .map(handler.decode)
-                .map(handler.store)
-                .map(handler.respond)
-                .map(handler.encode));
-
-        client.publish('phev/send', response);
-
-    });
-    return client;
-}
-
 const setupRegisterComponent = dom => {
     Rx.Observable.combineLatest(
         registers({ database }),
@@ -158,8 +135,6 @@ const setupPage = dom => {
 };
 export default function (dom) {
 
-    const client = null // setupMqttListener({ mqtt, database });
-
     const domLoaded = Rx.Observable.fromEvent(dom, 'DOMContentLoaded')
         .subscribe(() => {
             domLoaded.unsubscribe();
@@ -169,8 +144,8 @@ export default function (dom) {
                 .subscribe(e => {
                     const message = {};
                     message.command = 0xf6;
-                    message.register = 4;
-                    message.data = Buffer.from([1]);
+                    message.register = 5;
+                    message.data = Buffer.from([0]);
                     carService.sendMessage(encode(message));
                     console.log('click ac');
                 });

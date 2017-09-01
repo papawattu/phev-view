@@ -20,7 +20,8 @@
         "express": "^4.15.3",
         "global-undom": "^0.1.1",
         "loader-utils": "^1.1.0",
-        "mqtt": "^2.9.1"
+        "mqtt": "^2.9.1",
+        "phev-mqtt": "^1.0.2"
     },
     "devDependencies": {
         "babel-cli": "^6.24.1",
