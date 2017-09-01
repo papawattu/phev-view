@@ -27,7 +27,7 @@ describe('Car Data',() => {
     it('Should bootstrap',() => {
         assert.isNotNull(sut);
     });
-    it.skip('Should store',() => {
+    it('Should store',() => {
         
         const message = {register: 0x11, data : Buffer.from([0xff])};
         assert.deepEqual(sut.store(message),message);

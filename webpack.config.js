@@ -2,7 +2,7 @@ var path = require('path');
 var webpack = require('webpack');
 
 module.exports = {
-    entry: ['bootstrap-loader', './src/index.js'],
+    entry: ['./src/index.js'],
     output: {
         path: path.resolve(__dirname, 'public'),
         filename: 'bundle.js',

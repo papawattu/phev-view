@@ -14,9 +14,9 @@ if (!firebase.apps.length) {
     firebase.initializeApp(config);
 }
 
-const $register = Rx.Observable.fromEvent(firebase.database().ref('/registers/'), 'value');
-const $labels = Rx.Observable.fromEvent(firebase.database().ref('/codes/'), 'value');
+const registers$ = Rx.Observable.fromEvent(firebase.database().ref('/registers/'), 'value');
+const labels$ = Rx.Observable.fromEvent(firebase.database().ref('/codes/'), 'value');
 
-export { $register,$labels } ;
+export { registers$ as $register, labels$ as $labels } ;
 
 export default firebase.database;

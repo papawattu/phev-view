@@ -1,3 +1,3 @@
 require('babel-core/register');
 require('babel-polyfill');
-require('./app2').default(document);
+require('./app').default(document);
