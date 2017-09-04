@@ -5,6 +5,8 @@ import { sendTopic, receiveTopic } from '../config'
 
 const PING_SEND_CMD = 0xf9
 const PING_RESP_CMD = 0x9f
+const START_SEND = 0xf2
+const START_RESP = 0x2f
 const SEND_CMD = 0xf6
 const RESP_CMD = 0x6f
 const DEFAULT_LENGTH = 4
@@ -23,7 +25,7 @@ const splitMessages = () => receivedMessages().flatMap(x => toMessageArray(x))
 
 const decodedMessages = () => splitMessages().map(x => decode(x))
 
-const commandMessages = () => decodedMessages().filter(x => x.command !== PING_RESP_CMD)
+const commandMessages = () => decodedMessages().filter(x => x.command !== PING_RESP_CMD && x.command !== START_RESP)
 
 const swapNibble = byte => ((byte & 0xf) << 4) | ((byte & 0xf0) >> 4)
 
@@ -53,6 +55,13 @@ const buildMsg =
                         data: data
                     })
 
+const sendSimpleCommand = (register, value) => {
+    const msg = buildMsg(SEND_CMD)(REQUEST_TYPE)(register)(DEFAULT_LENGTH)(Buffer.from([value]))
+    console.log(`>> ${msg.register} : ${msg.data.map(x => ' ' + x.toString(16))}`)
+    
+    sendMessage(encode(msg))
+}
+
 const defaultResponse = message => buildMsg(swapNibble(message.command))(!message.type & 1)(message.register)(DEFAULT_LENGTH)(EMPTY_DATA)
 
 const reply = (message, timeout) => decodedMessages()
@@ -75,11 +84,15 @@ const pingResponseMessages = (timeout) => decodedMessages()
 
 const startPing = (interval, timeout) => pingInterval(interval)
     .sequenceEqual(pingResponseMessages(timeout))
+    .retryWhen(errors => errors
+        .do(err => console.log('Ping ' + err + ' restarting in 5 seconds'))
+        .delayWhen(val => Observable.timer(5000))
+    )
     
 const stopPing = subscription => subscription.unsubscribe()
 
 export {
     reply, generateChecksum, expectedResponse, receivedMessages,
     sendMessage, splitMessages, decodedMessages, startPing, pingInterval,
-    pingResponseMessages, commandMessages
+    pingResponseMessages, commandMessages, buildMsg, sendSimpleCommand
 }

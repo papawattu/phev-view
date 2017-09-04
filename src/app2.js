@@ -12,12 +12,6 @@ import { encode } from './car_message/encoder_decoder';
 import * as carService from './car_service/car_service'
 
 const pingSub = carService.startPing(1000, 5000)
-    .retryWhen(errors => errors
-        //log error message
-        .do(err => console.log('Ping ' + err + ' restarting in 5 seconds'))
-        //restart in 5 seconds
-        .delayWhen(val => Rx.Observable.timer(5000))
-    )
     .subscribe(x => {
         x.subscribe(y => console.log('+++' + y), err => {
             console.log('Error1 ' + err)

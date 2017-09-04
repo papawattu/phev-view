@@ -2,12 +2,15 @@ import React from 'react'
 import ReactDOM from 'react-dom'
 import Rx from 'rxjs'
 import PhevView from './components/phev_view'
+import Battery from './model/battery'
+import Registers from './model/registers'
+import CarController from './car_service/car_controller'
 
-const data = Rx.Observable
-    .interval(500)
-    .map(x => x % 100)
-    .map(x => ({ battery : { soc : x, charging : true, chargeType : 'regular' } }))
+export default class App {
+    constructor({ messages } = {}) {
+        const { data, operations } = CarController({ messages })
 
-const operations = {}
-
-ReactDOM.render((<div className='container-fluid'><PhevView data={data} operations={operations}/></div>),document.getElementById('root'))
+        ReactDOM.render((<div className='container-fluid'><PhevView data={data} operations={operations} /></div>),
+            document.getElementById('root'))
+    }
+}
