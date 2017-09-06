@@ -1,3 +1,4 @@
+/*
 import mqtt from 'mqtt';
 import { CarMessageHandler } from './car_message';
 import { CarDataStore } from './car_data';
@@ -5,7 +6,7 @@ import { registers } from './model/registers';
 import { responseLabels } from './model/labels';
 import { summary } from './components/summary';
 import registerContainer from './components/register_container';
-import database from './database';
+//import database from './database';
 import Rx from 'rxjs/Rx';
 import Immutable from 'immutable';
 import { encode } from './car_message/encoder_decoder';
@@ -161,3 +162,4 @@ export default function (dom) {
 
         });
 }
+*/

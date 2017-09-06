@@ -22,7 +22,7 @@
         "loader-utils": "^1.1.0",
         "lodash": "^4.17.4",
         "mqtt": "^2.9.1",
-        "phev-mqtt": "papawattu/phev-mqtt"
+        "phev-mqtt": "github:papawattu/phev-mqtt"
     },
     "devDependencies": {
         "babel-cli": "^6.24.1",

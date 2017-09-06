@@ -1,6 +1,6 @@
 import Rx from 'rxjs/Rx';
 import Immutable from 'immutable';
-import { $labels } from '../database';
+//import { $labels } from '../database';
 
 const labels = () => {
     return Rx.Observable

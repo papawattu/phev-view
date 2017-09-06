@@ -1,4 +1,6 @@
 import React from 'react'
+import codes from '../ref_data/phev_codes'
+import _ from 'lodash'
 
 class RegisterView extends React.Component {
     constructor(props) {
@@ -10,7 +12,6 @@ class RegisterView extends React.Component {
 
     componentDidMount() {
         this.registers
-            //.do(x => console.log('*** ' + JSON.stringify(x)))
             .subscribe(data => {
                 const newRegisters = this.state.registers.slice()
                 const idx = newRegisters.findIndex(x => x.register === data.register)
@@ -25,7 +26,9 @@ class RegisterView extends React.Component {
     }
     render() {
         const registers = this.state.registers.slice()
-        const item = reg => <div key={reg.register}>{reg.register} : {reg.data.toString('hex')}</div>
+        const evrCodes = _.pickBy(codes, (x, key) => key.includes('_EVR', x.length - 4))
+        const regLable = register => _.findKey(evrCodes, label => label === register)
+        const item = reg => <div key={reg.register}>{regLable(reg.register)} : {reg.data.toString('hex')}</div>
         const listItems = registers.map(reg => item(reg))
         return <div>{listItems}</div>
     }

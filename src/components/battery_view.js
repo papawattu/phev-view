@@ -15,33 +15,34 @@ const ChargeState = props => {
 }
 
 const BatteryGauge = props => {
-        const soc = '' + (props.soc + 6) + '%'
-        const timeRemaining = (100 - props.soc + 6) * 2.1,
-            timeRemainingHrs = Math.trunc(timeRemaining / 60),
-            timeRemainingMins = Math.trunc(timeRemaining - (timeRemainingHrs * 60))
+    const soc = '' + (props.soc + 6) + '%'
+    const timeRemaining = props.remaining,
+        timeRemainingHrs = Math.trunc(timeRemaining / 60),
+        timeRemainingMins = Math.trunc(timeRemaining - (timeRemainingHrs * 60))
 
 
-        return <div id="battery" className="col-m-3">
-            <h4>Battery</h4>
-            <div className="progress">
-                <div className="progress-bar" role="progressbar" style={{width : soc}}>{soc} Charged</div>
-            </div>
-            <p>Time remaining to fully charged is approximately {timeRemainingHrs} hours and {timeRemainingMins} minutes</p>
+    return <div id="battery" className="col-m-3">
+        <h4>Battery</h4>
+        <div className="progress">
+            <div className="progress-bar" role="progressbar" style={{ width: soc }}>{soc} Charged</div>
         </div>
-    }
+        <p>Time remaining to fully charged is approximately {timeRemainingHrs} hours and {timeRemainingMins} minutes</p>
+    </div>
+}
 
 class BatteryView extends React.Component {
     constructor(props) {
         super(props)
         this.battery = props.data.battery
-        this.state = { battery : { charging : false, chargeType : undefined} }
+        this.state = { battery: { soc: 100, charging: false, chargeType: undefined, remaining: 0 } }
 
     }
 
     componentDidMount() {
         this.battery
+            .do(x => console.log('+++' + JSON.stringify(x)))
             .map(x => x.battery)
-            .subscribe(data => this.setState({battery: data}));
+            .subscribe(data => this.setState({ battery: data }))
     }
 
     componentWillUnmount() {
@@ -50,8 +51,8 @@ class BatteryView extends React.Component {
 
     render() {
         return <div>
-            <BatteryGauge soc={this.state.battery.soc}/>
-            <ChargeState chargeType={this.state.battery.chargeType} state={this.state.battery.charging}/>
+            <BatteryGauge soc={this.state.battery.soc} remaining={this.state.battery.remaining}/>
+            <ChargeState chargeType={this.state.battery.chargeType} state={this.state.battery.charging} />
         </div>
     }
 }

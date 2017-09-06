@@ -6,6 +6,7 @@ import RegisterView from './register_view'
 const RefreshButton = props => <button onClick={props.updateClick} className="btn btn-default">Refresh</button>
 const AirConButton = props => <button onClick={props.airConClick} className="btn btn-default">Air Conditioning</button>
 const HeadLightsButton = props => <button onClick={props.headLightClick} className="btn btn-defeult">Head Lights</button>
+const ParkLightsButton = props => <button onClick={props.parkLightClick} className="btn btn-defeult">Parking Lights</button>
 
 
 class PhevView extends React.Component {
@@ -25,6 +26,7 @@ class PhevView extends React.Component {
             <RefreshButton updateClick={operations.update}/>
             <AirConButton airConClick={operations.airCon}/>
             <HeadLightsButton headLightClick={operations.headLights}/>
+            <ParkLightsButton parkLightClick={operations.parkLights}/>
             <RegisterView data={data}/>
         </div>
     }

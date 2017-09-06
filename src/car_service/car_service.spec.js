@@ -1,20 +1,20 @@
 import chai from 'chai';
 import sinon from 'sinon';
 import { Observable } from 'rxjs'
-import { send, messages, subscribe, unsubscribe } from './mqtt_client'
-import {
-    pingInterval, pingMessage, reply, sendMessage, receivedMessages, splitMessages,
-    decodedMessages, expectedResponse, generateChecksum, generateChecksum2, startPing,
-    pingResponseMessages
-} from './car_service'
+import PhevClient from 'phev-mqtt'
+import { stub_mqtt as mqtt } from '../stubs/mqtt'
+import CarService from './car_service'
+import config from '../config'
 
 const assert = chai.assert;
+const carService = CarService({config})
+const phevClient = PhevClient({mqtt, mqttUri: 'test'})
 
 describe('Car service', () => {
     it('Should send message', () => {
 
-        const sub = messages('phev/send')
-        subscribe('phev/send')
+        const sub = carService.messages('phev/send')
+        phevClient.subscribe('phev/send')
 
         const s = sub.subscribe(x => {
             assert.deepEqual(x.message, Buffer.from([0xf6, 0x05, 0x00, 0x01, 0x01, 0x00]))
