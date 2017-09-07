@@ -31,7 +31,7 @@ module.exports = {
         new webpack.DefinePlugin({
             'process.env': {
                 'NODE_ENV': JSON.stringify('production'),
-                'MQTTURI': JSON.stringify('wss://secure.wattu.com:8883/mqtt'),
+                'MQTTURI': JSON.stringify('ws://test.mosquitto.org:8080/mqtt'),
                 'DEBUG' : JSON.stringify(true)
             }
         })

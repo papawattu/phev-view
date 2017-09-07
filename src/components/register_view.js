@@ -48,10 +48,10 @@ class RegisterView extends React.Component {
                 <div className="panel panel-primary">
                     <div className="panel-heading">
                         <h4 className="panel-title">
-                            <a data-toggle="collapse" href="#collapse1">Registers panel</a>
+                            <a data-toggle="collapse" data-target="#collapse1">Registers panel</a>
                         </h4>
                     </div>
-                    <div className="panel-collapse collapse">
+                    <div className="panel-collapse collapse in">
                         <div id="collapse1" className="panel-body">
                             <table className={registersClass}><thead><th>Register</th><th>Data</th></thead><tbody>{listItems}</tbody></table>
                         </div>
