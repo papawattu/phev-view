@@ -6,9 +6,9 @@ import { encode } from '../car_message/encoder_decoder'
 import codes from '../ref_data/phev_codes'
 import log from '../utils/logger'
 
-const CarController = ({ config }) => {
+const CarController = (config) => {
 
-    const carService = CarService({ config })
+    const carService = CarService(config)
 
     const responder = carService.commandMessages()
         .subscribe(msg => {

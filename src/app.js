@@ -7,8 +7,8 @@ import Registers from './model/registers'
 import CarController from './car_service/car_controller'
 
 export default class App {
-    constructor({ config } = {}) {
-        const { data, operations } = CarController({ config })
+    constructor(config) {
+        const { data, operations } = CarController(config)
 
         ReactDOM.render((<div className='container'><PhevView data={data} operations={operations} /></div>),
             document.getElementById('root'))
