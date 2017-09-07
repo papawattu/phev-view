@@ -30,7 +30,7 @@ const Battery = ({ registers }) => {
             {
                 battery: {
                     charging: x.data[0] == 1 ? true : false,
-                    remaining: timeRemain(x.data),
+                    remaining: x.data[2] !== 0xff ? timeRemain(x.data) : 0,
                     chargeType: 'regular'
                 }
             }

@@ -3,6 +3,7 @@ import { encode, decode, toMessageArray } from '../car_message/encoder_decoder'
 import PhevMqtt from 'phev-mqtt'
 import { sendTopic, receiveTopic, mqttUri, mqtt } from '../config'
 import log from '../utils/logger'
+import codes from '../ref_data/phev_codes'
 
 const PING_SEND_CMD = 0xf9
 const PING_RESP_CMD = 0x9f
@@ -15,11 +16,12 @@ const REQUEST_TYPE = 0
 const RESPONSE_TYPE = 1
 const EMPTY_DATA = Buffer.from([0]);
 
-
 const CarService = ({ config }) => {
     const phevMqtt = PhevMqtt({ mqtt, uri: mqttUri })
 
     const sendMessage = message => {
+
+        log('>> ' + JSON.stringify(message))
         phevMqtt.send(sendTopic, encode(message))
     }
     const receivedMessages = () => {
@@ -30,7 +32,10 @@ const CarService = ({ config }) => {
 
     const splitMessages = () => receivedMessages().flatMap(x => toMessageArray(x))
 
-    const decodedMessages = () => splitMessages().map(x => decode(x))
+    const decodedMessages = () => splitMessages()
+        .map(x => decode(x))
+        .do(x => log('<< ' + JSON.stringify(x)))
+        .filter(x => x.type == REQUEST_TYPE)
 
     const commandMessages = () => decodedMessages().filter(x => x.command !== PING_RESP_CMD && x.command !== START_RESP)
 
@@ -65,14 +70,10 @@ const CarService = ({ config }) => {
 
     const sendFullCommand = (register, data) => {
         const msg = buildMsg(SEND_CMD)(REQUEST_TYPE)(register)(DEFAULT_LENGTH + data.length-1)(data)
-        log(`>> ${msg.register} : ${msg.data.map(x => ' ' + x.toString(16))}`)
-
         sendMessage(msg)
     }
     const sendSimpleCommand = (register, value) => {
         const msg = buildMsg(SEND_CMD)(REQUEST_TYPE)(register)(DEFAULT_LENGTH)(Buffer.from([value]))
-        log(`>> ${msg.register} : ${msg.data.map(x => ' ' + x.toString(16))}`)
-
         sendMessage(msg)
     }
 
@@ -89,28 +90,32 @@ const CarService = ({ config }) => {
         .map(x => x % 100)
         .do(x => pingMessage(x))
 
-    const pingResponseMessages = (timeout) => decodedMessages()
-        .timeout(timeout)
+    const pingResponseMessages = timeout => decodedMessages()
+        //.timeout(timeout)
         .filter(x => x.command === PING_RESP_CMD)
         .map(x => x.register)
 
     const startPing = (interval, timeout) => pingInterval(interval)
         .sequenceEqual(pingResponseMessages(timeout))
-        .retryWhen(errors => errors
-            .do(err => log('Ping ' + err + ' restarting in 5 seconds'))
-            .delayWhen(val => Observable.timer(5000))
-        )
-
-    const pingSub = startPing(config.pingInterval, config.pingTimeout)
+     //   .retryWhen(errors => errors
+     //       .do(err => log('Ping ' + err + ' restarting in 5 seconds'))
+     //       .delayWhen(val => Observable.timer(30000))
+       // )
+    const pingSub = startPing(1000, 10000)
         .subscribe(x => {
-            log('retry failure' + JSON.stringify(x))
-            x.subscribe(y => log('+++' + y), err => {
-                log('Retry Error ' + err)
-                pingSub.unsubscribe()
-            })
+     //       log('retry failure' + JSON.stringify(x))
+     //           x.subscribe(y => log('+++' + y), err => {
+     //               log('Retry Error ' + err)
+     //               pingSub.unsubscribe()
+     //           })
         })
 
+    const sendInit = () => {
+        sendMessage(buildMsg(START_SEND)(REQUEST_TYPE)(1)(10)(Buffer.from([0x24,0x0d,0xc2,0xc2,0x91,0x85])))
+        sendMessage(buildMsg(SEND_CMD)(REQUEST_TYPE)(0xaa)(DEFAULT_LENGTH)(EMPTY_DATA))
+    }
     return {
+        sendInit: sendInit,
         sendMessage: sendMessage,
         receivedMessages: receivedMessages,
         decodedMessages: decodedMessages,
@@ -119,6 +124,7 @@ const CarService = ({ config }) => {
         sendSimpleCommand: sendSimpleCommand,
         sendFullCommand: sendFullCommand,
         sendDateSync: sendDateSync,
+        startPing: startPing,
     }
 }
 

@@ -9,14 +9,15 @@ import log from '../utils/logger'
 const CarController = ({ config }) => {
 
     const carService = CarService({ config })
-    
-    const responder = carService.commandMessages().subscribe(msg => {
-        carService.sendMessage(encode(carService.expectedResponse(msg)))
-    })
+
+    const responder = carService.commandMessages()
+        .subscribe(msg => {
+            carService.sendMessage(carService.expectedResponse(msg))
+        })
     const sendCommand = (command, value) => {
         carService.sendSimpleCommand(command, value || 1)
     }
-    const messgaes = carService.commandMessages()
+    const messages = carService.commandMessages()
 
     const registers = Registers({ messages: messages })
 
@@ -33,10 +34,9 @@ const CarController = ({ config }) => {
         headLights: () => sendCommand(codes.KO_WF_H_LAMP_CONT_SP),
         parkLights: () => sendCommand(codes.KO_WF_P_LAMP_CONT_SP),
     }
-
+    carService.sendInit()
     return {
         commandMessages: carService.commandMessages(),
-        sendCommand: sendCommand,
         data: ({ battery: battery, registers: registers }),
         operations: operations
     }

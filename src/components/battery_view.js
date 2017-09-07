@@ -2,31 +2,33 @@ import React from 'react'
 import _ from 'lodash'
 
 const ChargeState = props => {
-    const charging = props.state ? 'Charging ' : 'Not Charging '
-    const chargeType = _.capitalize(props.chargeType)
-    const labelClass = props.state ? 'label label-success' : 'label label-primary'
-
+    const charging = props.state ? <span class="glyphicons glyphicons-battery-charging">Charging</span> : 'Not Charging '
+    const labelClass = props.state ? 'label label-success' : 'label label-primary'    
+    const chargeType = props.state ? <p>Charge type : <span className={labelClass}>{_.capitalize(props.chargeType)}</span></p> : ''
+    
     return <div className="well">
         <div className="col-m-3">
             <p>Charge status : <span className={labelClass}>{charging}</span></p>
-            <p>Charge type : <span className={labelClass}>{chargeType} </span></p>
+            {chargeType}
         </div>
     </div>
 }
 
 const BatteryGauge = props => {
-    const soc = '' + (props.soc + 6) + '%'
+    const soc = '' + (props.soc < 94 ? props.soc : 100) + '%'
     const timeRemaining = props.remaining,
         timeRemainingHrs = Math.trunc(timeRemaining / 60),
         timeRemainingMins = Math.trunc(timeRemaining - (timeRemainingHrs * 60))
+    const timeRemainingMarkup = props.state ? `Time remaining to fully charged is approximately ${timeRemainingHrs} hours and ${timeRemainingMins} minutes`
+            : ''
+    const progressBarClasses = 'progress-bar ' + (props.soc > 9 ? (props.soc > 39 ? 'progress-bar-success' : 'progress-bar-warning') : 'progress-bar-danger')
 
-
-    return <div id="battery" className="col-m-3">
+    return <div id="battery" className="">
         <h4>Battery</h4>
-        <div className="progress">
-            <div className="progress-bar" role="progressbar" style={{ width: soc }}>{soc} Charged</div>
+        <div className="progress text-center">
+            <div className={progressBarClasses} role="progressbar" style={{ minWidth: '2em;', width: soc }}><span style={{ color: 'black'}}>{soc} Charged</span></div>
         </div>
-        <p>Time remaining to fully charged is approximately {timeRemainingHrs} hours and {timeRemainingMins} minutes</p>
+        <p>{timeRemainingMarkup}</p>
     </div>
 }
 
@@ -34,13 +36,12 @@ class BatteryView extends React.Component {
     constructor(props) {
         super(props)
         this.battery = props.data.battery
-        this.state = { battery: { soc: 100, charging: false, chargeType: undefined, remaining: 0 } }
+        this.state = { battery: { soc: 0, charging: false, chargeType: undefined, remaining: 0 } }
 
     }
 
     componentDidMount() {
         this.battery
-            .do(x => console.log('+++' + JSON.stringify(x)))
             .map(x => x.battery)
             .subscribe(data => this.setState({ battery: data }))
     }
@@ -50,8 +51,8 @@ class BatteryView extends React.Component {
     }
 
     render() {
-        return <div>
-            <BatteryGauge soc={this.state.battery.soc} remaining={this.state.battery.remaining}/>
+        return <div className="col-md-8">
+            <BatteryGauge soc={this.state.battery.soc} remaining={this.state.battery.remaining} state={this.state.battery.charging}/>
             <ChargeState chargeType={this.state.battery.chargeType} state={this.state.battery.charging} />
         </div>
     }
