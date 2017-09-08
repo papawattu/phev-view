@@ -33,8 +33,12 @@ const CarController = ({ config }) => {
         airCon: () => sendCommand(codes.KO_WF_MANUAL_AC_ON_RQ_SP,2),
         headLights: () => sendCommand(codes.KO_WF_H_LAMP_CONT_SP),
         parkLights: () => sendCommand(codes.KO_WF_P_LAMP_CONT_SP),
+        horn: () => sendCommand(codes.KO_WF_R_CUSTOM_SP,0),
+        doorLock: () => sendCommand(codes.KO_WF_D_LOCK_RQ_SP,1),
+        custom: (reg,val) => sendCommand(reg,val),
     }
     carService.sendInit()
+
     return {
         commandMessages: carService.commandMessages(),
         data: ({ battery: battery, registers: registers }),
