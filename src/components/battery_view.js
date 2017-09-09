@@ -24,7 +24,6 @@ const BatteryGauge = props => {
     const progressBarClasses = 'progress-bar ' + (props.soc > 9 ? (props.soc > 39 ? 'progress-bar-success' : 'progress-bar-warning') : 'progress-bar-danger')
 
     return <div id="battery" className="">
-        <h4>Battery</h4>
         <div className="progress text-center">
             <div className={progressBarClasses} role="progressbar" style={{ minWidth: '2em;', width: soc }}><span style={{ color: 'black'}}>{soc} Charged</span></div>
         </div>
@@ -51,9 +50,15 @@ class BatteryView extends React.Component {
     }
 
     render() {
-        return <div className="col-md-8">
-            <BatteryGauge soc={this.state.battery.soc} remaining={this.state.battery.remaining} state={this.state.battery.charging}/>
-            <ChargeState chargeType={this.state.battery.chargeType} state={this.state.battery.charging} />
+        return <div className="panel panel-primary">
+            <div className="panel-heading">
+                <h4 className="panel-title">Battery</h4>
+            </div>
+            <div className="panel-body">
+                <BatteryGauge soc={this.state.battery.soc} remaining={this.state.battery.remaining} state={this.state.battery.charging}/>
+                <ChargeState chargeType={this.state.battery.chargeType} state={this.state.battery.charging} />
+        
+            </div>
         </div>
     }
 }

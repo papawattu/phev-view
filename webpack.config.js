@@ -32,7 +32,7 @@ module.exports = {
             'process.env': {
                 'NODE_ENV': JSON.stringify('production'),
                 'MQTTURI': JSON.stringify('wss://secure.wattu.com:8883/mqtt'),
-                'DEBUG' : JSON.stringify(true)
+                'DEBUG' : JSON.stringify(false)
             }
         })
     ],
