@@ -6,7 +6,7 @@ const ChargeState = props => {
     const labelClass = props.state ? 'label label-success' : 'label label-primary'    
     const chargeType = props.state ? <p>Charge type : <span className={labelClass}>{_.capitalize(props.chargeType)}</span></p> : ''
     
-    return <div className="well">
+    return <div>
         <div className="col-m-3">
             <p>Charge status : <span className={labelClass}>{charging}</span></p>
             {chargeType}

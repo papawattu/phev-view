@@ -1,11 +1,9 @@
 import React from 'react'
 
 const RefreshButton = props => <button onClick={props.updateClick} className="btn btn-primary"><span className="glyphicon glyphicon-refresh"></span></button>
-const AirConButton = props => <button onClick={props.airConClick} className="btn btn-default">Air Conditioning</button>
-const HeadLightsButton = props => <button onClick={props.headLightClick} className="btn btn-default">Head Lights</button>
-const ParkLightsButton = props => <button onClick={props.parkLightClick} className="btn btn-default"><span className="glyphicon glyphicon-lightbulb"></span>Parking Lights</button>
-const HornButton = props => <button onClick={props.hornClick} className="btn btn-default"><span className="glyphicon glyphicon-lightbulb"></span>Horn</button>
-const DoorLockButton = props => <button onClick={props.doorLockClick} className="btn btn-default"><span className="glyphicon glyphicon-lightbulb"></span>Door Lock</button>
+const AirConButton = props => <button onClick={props.airConClick} className={(props.enabled ? "btn btn-success" : "btn btn-primary")}>Air Conditioning</button>
+const HeadLightsButton = props => <button onClick={props.headLightClick} className={(props.enabled ? "btn btn-success" : "btn btn-primary")}>Head Lights</button>
+const ParkLightsButton = props => <button onClick={props.parkLightClick} className={(props.enabled ? "btn btn-success" : "btn btn-primary")}><span className="glyphicon glyphicon-lightbulb"></span>Parking Lights</button>
 
 class CustomCommand extends React.Component {
 
@@ -47,33 +45,52 @@ class OperationsView extends React.Component {
     render() {
 
         const operations = this.operations
+        
+        const airConEnabled = true
+        const headLightsEnabled = true
+        const parkingLightsEnabled = true
 
         return <div className="panel panel-primary">
             <div className="panel-heading">
                 <h4 className="panel-title">Operations</h4>
             </div>
             <div className="panel-body">
-                <div>
-                    <div>
-                        <AirConButton airConClick={operations.airCon} />
+                <div className="row">
+                    <div className="col-sm-8">
+                        <h4 className="bold">Turn air conditioning {airConEnabled ? 'off' : 'on'}</h4>
                     </div>
-                    <div>
-                        <HeadLightsButton headLightClick={operations.headLights} />
-                    </div>
-                    <div>
-                        <ParkLightsButton parkLightClick={operations.parkLights} />
-                    </div>
-                    <div>
-                        <HornButton hornClick={operations.horn} />
+                    <div className="col-sm-4">
+                        <AirConButton airConClick={operations.airCon} enabled={airConEnabled}/>
                     </div>
                 </div>
-                <div>
-                    <div>
-                        <CustomCommand sendCommand={operations.custom} />
+                <div className="row">
+                    <div className="col-sm-8">
+                        <h4 className="bold">Turn head lights {headLightsEnabled ? 'off' : 'on'}</h4>
+                    </div>
+                    <div className="col-sm-4">
+                        <HeadLightsButton headLightClick={operations.headLights} enabled={headLightsEnabled}/>
+                    </div>
+                </div>
+                <div className="row">
+                    <div className="col-sm-8">
+                        <h4 className="bold">Turn parking lights {parkingLightsEnabled ? 'off' : 'on'}</h4>
+                    </div>
+                    <div className="col-sm-4">
+                        <ParkLightsButton parkLightClick={operations.parkLights} enabled={parkingLightsEnabled}/>
+                    </div>
+                </div>
+                <div className="row">
+                    <div className="col-sm-2">
+                        <div className="collapse">
+                            <div className="collapse in">
+                                <CustomCommand sendCommand={operations.custom} />
+                            </div>
+                        </div>
                     </div>
                 </div>
             </div>
         </div>
+
     }
 }
 
