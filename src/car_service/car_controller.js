@@ -4,7 +4,7 @@ import Battery from '../model/battery'
 import Registers from '../model/registers'
 import { encode } from '../car_message/encoder_decoder'
 import codes from '../ref_data/phev_codes'
-import log from '../utils/logger'
+import { log } from 'phev-utils'
 
 const CarController = ({ config }) => {
 

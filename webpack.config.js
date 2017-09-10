@@ -25,15 +25,12 @@ module.exports = {
         }]
     },
     plugins: [
-        new webpack.ProvidePlugin({
-            jQuery: 'jquery'
-        }),
         new webpack.DefinePlugin({
             'process.env': {
                 'NODE_ENV': JSON.stringify('production'),
                 'MQTTURI': JSON.stringify('wss://secure.wattu.com:8883/mqtt'),
                 'DEBUG' : JSON.stringify(false)
             }
-        })
+        }),
     ],
 };
