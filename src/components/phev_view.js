@@ -3,6 +3,7 @@ import React from 'react'
 import BatteryView from './battery_view'
 import RegisterView from './register_view'
 import OperationsView from './operations_view'
+import ConnectView from './connect_view'
 
 class PhevView extends React.Component {
 
@@ -16,6 +17,7 @@ class PhevView extends React.Component {
         const data = this.data
         const operations = this.operations
 
+        
         return <div className="container">
             <div className="row">
                 <div className="col-sm-6">
@@ -23,9 +25,7 @@ class PhevView extends React.Component {
                     <p>Some text</p>
                 </div>
                 <div className="col-sm-6">
-                    <div className="">
-                        <p className="text-right">Connected</p>
-                    </div>
+                    <ConnectView data={data} operations={operations}/>
                 </div>
             </div>
             <div className="row">

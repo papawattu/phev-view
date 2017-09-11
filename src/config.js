@@ -4,6 +4,7 @@ import stub_mqtt from './stubs/mqtt'
 export const mqttUri = process.env.MQTTURI || 'wss://secure.wattu.com:8883/mqtt'
 export const receiveTopic = 'phev/receive'
 export const sendTopic = 'phev/send'
+export const startTopic = 'phev/start'
 export const pingInterval = 1000
 export const pingTimeout = 5000
 

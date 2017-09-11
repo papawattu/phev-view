@@ -1,7 +1,7 @@
 import { Observable } from 'rxjs'
 import { encode, decode, toMessageArray } from '../car_message/encoder_decoder'
 import PhevMqtt from 'phev-mqtt'
-import { sendTopic, receiveTopic, mqttUri, mqtt } from '../config'
+import { startTopic,  sendTopic, receiveTopic, mqttUri, mqtt } from '../config'
 import { log } from 'phev-utils'
 import codes from '../ref_data/phev_codes'
 
@@ -19,6 +19,11 @@ const EMPTY_DATA = Buffer.from([0]);
 const CarService = ({ config }) => {
     const phevMqtt = PhevMqtt({ mqtt, uri: mqttUri })
 
+    const sendStartCommand = () => {
+        log.debug('Starting connection')    
+        phevMqtt.send(startTopic, '')
+    } 
+
     const sendMessage = message => {
 
         log.debug('>> ' + JSON.stringify(message))
@@ -34,7 +39,7 @@ const CarService = ({ config }) => {
 
     const decodedMessages = () => splitMessages()
         .map(x => decode(x))
-        .do(x => log('<< ' + JSON.stringify(x)))
+        .do(x => log.debug('<< ' + JSON.stringify(x)))
         .filter(x => x.type == REQUEST_TYPE)
 
     const commandMessages = () => decodedMessages().filter(x => x.command !== PING_RESP_CMD && x.command !== START_RESP)
@@ -115,16 +120,17 @@ const CarService = ({ config }) => {
         sendMessage(buildMsg(SEND_CMD)(REQUEST_TYPE)(0xaa)(DEFAULT_LENGTH)(EMPTY_DATA))
     }
     return {
-        sendInit: sendInit,
-        sendMessage: sendMessage,
-        receivedMessages: receivedMessages,
-        decodedMessages: decodedMessages,
-        commandMessages: commandMessages,
-        expectedResponse: expectedResponse,
-        sendSimpleCommand: sendSimpleCommand,
-        sendFullCommand: sendFullCommand,
-        sendDateSync: sendDateSync,
-        startPing: startPing,
+        sendInit            : sendInit,
+        sendMessage         : sendMessage,
+        sendStartCommand    : sendStartCommand,
+        receivedMessages    : receivedMessages,
+        decodedMessages     : decodedMessages,
+        commandMessages     : commandMessages,
+        expectedResponse    : expectedResponse,
+        sendSimpleCommand   : sendSimpleCommand,
+        sendFullCommand     : sendFullCommand,
+        sendDateSync        : sendDateSync,
+        startPing           : startPing,
     }
 }
 
