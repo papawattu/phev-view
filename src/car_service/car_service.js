@@ -1,9 +1,12 @@
 import { Observable } from 'rxjs'
 import { encode, decode, toMessageArray } from '../car_message/encoder_decoder'
 import PhevMqtt from 'phev-mqtt'
-import { startTopic,  sendTopic, receiveTopic, mqttUri, mqtt } from '../config'
+import { startTopic, stopTopic, sendTopic, receiveTopic, mqttUri, mqtt } from '../config'
 import { log } from 'phev-utils'
 import codes from '../ref_data/phev_codes'
+
+//TODO externalise
+const macAddr = [0x24,0x0d,0xc2,0xc2,0x91,0x85]
 
 const PING_SEND_CMD = 0xf9
 const PING_RESP_CMD = 0x9f
@@ -17,11 +20,16 @@ const RESPONSE_TYPE = 1
 const EMPTY_DATA = Buffer.from([0]);
 
 const CarService = ({ config }) => {
+
     const phevMqtt = PhevMqtt({ mqtt, uri: mqttUri })
 
     const sendStartCommand = () => {
         log.debug('Starting connection')    
         phevMqtt.send(startTopic, '')
+    } 
+    const sendStopCommand = () => {
+        log.debug('Disconnecting')    
+        phevMqtt.send(stopTopic, '')
     } 
 
     const sendMessage = message => {
@@ -33,8 +41,13 @@ const CarService = ({ config }) => {
         phevMqtt.subscribe(receiveTopic)
         return phevMqtt.messages(receiveTopic)
             .map(x => x.message)
+            .share()
     }
-
+    const connectionMessages = () => {
+        phevMqtt.subscribe('connection')
+        phevMqtt.messages('connection').subscribe(x => console.log('Hello ' + x.message))
+        
+    }
     const splitMessages = () => receivedMessages().flatMap(x => toMessageArray(x))
 
     const decodedMessages = () => splitMessages()
@@ -96,33 +109,38 @@ const CarService = ({ config }) => {
         .do(x => pingMessage(x))
 
     const pingResponseMessages = timeout => decodedMessages()
-        //.timeout(timeout)
         .filter(x => x.command === PING_RESP_CMD)
         .map(x => x.register)
 
-    const startPing = (interval, timeout) => pingInterval(interval)
+    /*const newPing = Observable.timer(0,1000)
+        .do(i => pingMessage(i))
+        .concatMap(x => 
+            Observable
+                .race(Observable.throw('timeout').delay(5000),pingResponseMessages()))
+        .subscribe(x => console.log(x),err => console.log(err))
+ */   const startPing = (interval, timeout) => pingInterval(interval)
         .sequenceEqual(pingResponseMessages(timeout))
      //   .retryWhen(errors => errors
      //       .do(err => log('Ping ' + err + ' restarting in 5 seconds'))
      //       .delayWhen(val => Observable.timer(30000))
-       // )
-    const pingSub = startPing(1000, 10000)
-        .subscribe(x => {
+    
      //       log('retry failure' + JSON.stringify(x))
      //           x.subscribe(y => log('+++' + y), err => {
      //               log('Retry Error ' + err)
      //               pingSub.unsubscribe()
      //           })
-        })
+     //   })
 
     const sendInit = () => {
-        sendMessage(buildMsg(START_SEND)(REQUEST_TYPE)(1)(10)(Buffer.from([0x24,0x0d,0xc2,0xc2,0x91,0x85])))
+        sendMessage(buildMsg(START_SEND)(REQUEST_TYPE)(1)(10)(Buffer.from(macAddr)))
         sendMessage(buildMsg(SEND_CMD)(REQUEST_TYPE)(0xaa)(DEFAULT_LENGTH)(EMPTY_DATA))
+        connectionMessages()
     }
     return {
         sendInit            : sendInit,
         sendMessage         : sendMessage,
         sendStartCommand    : sendStartCommand,
+        sendStopCommand     : sendStopCommand,
         receivedMessages    : receivedMessages,
         decodedMessages     : decodedMessages,
         commandMessages     : commandMessages,
