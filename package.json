@@ -21,7 +21,8 @@
         "global-undom": "^0.1.1",
         "loader-utils": "^1.1.0",
         "lodash": "^4.17.4",
-        "phev-mqtt": "github:papawattu/phev-mqtt"
+        "phev-mqtt": "github:papawattu/phev-mqtt",
+        "phev-utils": "github:papawattu/phev-utils"
     },
     "devDependencies": {
         "babel-cli": "^6.26.0",

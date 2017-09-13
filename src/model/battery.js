@@ -37,7 +37,7 @@ const Battery = ({ registers }) => {
         ))
     const battery = Observable.combineLatest(soc,charging)
         .map(x => _.merge(x[0],x[1]))
-        .do(x => console.log('::' + JSON.stringify(x)))    
+ 
     return battery
 }
 
