@@ -22,7 +22,7 @@ const CarService = config => {
 
     const sendMessage = message => {
 
-        log('>> ' + JSON.stringify(message))
+        log.debug('>> ' + JSON.stringify(message))
         phevMqtt.send(sendTopic, encode(message))
     }
     const receivedMessages = () => {
@@ -35,7 +35,7 @@ const CarService = config => {
 
     const decodedMessages = () => splitMessages()
         .map(x => decode(x))
-        .do(x => log('<< ' + JSON.stringify(x)))
+        .do(x => log.debug('<< ' + JSON.stringify(x)))
         .filter(x => x.type == REQUEST_TYPE)
 
     const commandMessages = () => decodedMessages().filter(x => x.command !== PING_RESP_CMD && x.command !== START_RESP)
