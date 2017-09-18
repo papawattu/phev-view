@@ -1,7 +1,7 @@
 import { Observable } from 'rxjs'
 import { encode, decode, toMessageArray } from '../car_message/encoder_decoder'
 import PhevMqtt from 'phev-mqtt'
-import log from '../utils/logger'
+import { log } from 'phev-utils'
 import codes from '../ref_data/phev_codes'
 
 const PING_SEND_CMD = 0xf9
@@ -15,7 +15,7 @@ const REQUEST_TYPE = 0
 const RESPONSE_TYPE = 1
 const EMPTY_DATA = Buffer.from([0]);
 
-const CarService = (config) => {
+const CarService = config => {
 
     const { mqttUri, sendTopic, receiveTopic} = config
     const phevMqtt = PhevMqtt({ uri: mqttUri })

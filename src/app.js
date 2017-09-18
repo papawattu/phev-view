@@ -5,6 +5,7 @@ import PhevView from './components/phev_view'
 import Battery from './model/battery'
 import Registers from './model/registers'
 import CarController from './car_service/car_controller'
+import config from './config'
 
 export default class App {
     constructor(config) {
