@@ -40,13 +40,13 @@ class BatteryView extends React.Component {
     }
 
     componentDidMount() {
-        this.battery
+        this.batterySub = this.battery
             .map(x => x.battery)
             .subscribe(data => this.setState({ battery: data }))
     }
 
     componentWillUnmount() {
-        this.battery.unsubscribe();
+        this.batterySub.unsubscribe();
     }
 
     render() {

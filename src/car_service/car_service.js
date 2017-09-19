@@ -3,6 +3,7 @@ import { encode, decode, toMessageArray } from '../car_message/encoder_decoder'
 import PhevMqtt from 'phev-mqtt'
 import { log } from 'phev-utils'
 import codes from '../ref_data/phev_codes'
+import { messages } from '../stubs/fakeData'
 
 const PING_SEND_CMD = 0xf9
 const PING_RESP_CMD = 0x9f
@@ -15,14 +16,24 @@ const REQUEST_TYPE = 0
 const RESPONSE_TYPE = 1
 const EMPTY_DATA = Buffer.from([0]);
 
+const isStubbed = process.env.STUB ? true : false
+
+
+const stubMqtt = {
+    subscribe: () => undefined,
+    send: () => undefined,
+    messages: () => Observable.of({topic: 'phev/receive', message: messages })
+}
+
 const CarService = config => {
 
     const { mqttUri, sendTopic, receiveTopic} = config
-    const phevMqtt = PhevMqtt({ uri: mqttUri })
+
+    const phevMqtt = isStubbed ? stubMqtt : PhevMqtt({uri: mqttUri})
 
     const sendMessage = message => {
-
         log.debug('>> ' + JSON.stringify(message))
+
         phevMqtt.send(sendTopic, encode(message))
     }
     const receivedMessages = () => {
