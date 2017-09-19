@@ -40,7 +40,7 @@ class RegisterView extends React.Component {
 
         const hidden = this.state.hidden
 
-        this.registers
+        this.registersSub = this.registers
             .subscribe(data => {
                 const updatedRegisters = this.state.registers.slice()
                 const updatedECURegisters = this.state.ecuRegisters.slice() 
@@ -74,7 +74,7 @@ class RegisterView extends React.Component {
     }
 
     componentWillUnmount() {
-        this.registers.unsubscribe();
+        this.registersSub.unsubscribe();
     }
     render() {
         const registersClass = this.state.hidden ? 'hidden table table-striped' : 'table table-striped'
