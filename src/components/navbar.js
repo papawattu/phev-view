@@ -12,12 +12,12 @@ import ConnectView from './connect_view'
 
 
 const LoginLogout = props => <ul className="nav navbar-nav navbar-right">
-    <li><a href="#login" data-toggle="modal" data-target="#myModal">Login / Register</a></li>
+    <li><a href="#login" data-toggle="modal" data-target="#login">Login / Register</a></li>
 </ul>
 
 const Home = props => <div>Home</div>
 
-const LoginView = props => <div id="myModal" className="modal fade" role="dialog">
+const LoginView = props => <div id="login" className="modal fade" role="dialog">
     <div className="modal-dialog">
         <div className="modal-content">
             <div className="modal-header">
