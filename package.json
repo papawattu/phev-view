@@ -6,11 +6,11 @@
     "scripts": {
         "test": "npm run test-unit",
         "start": "node index.js",
-        "start-dev": "webpack-dev-server --hot",
+        "start-dev": "cross-env NODE_ENV=\"production\" webpack-dev-server --hot",
         "test-unit": "cross-env NODE_ENV=test DEBUG=true mocha --reporter mocha-circleci-reporter --require babel-polyfill --compilers js:babel-core/register --recursive ./src/**/*.spec.js",
         "test-watch": "cross-env NODE_ENV=test DEBUG=true mocha --watch --require babel-polyfill --compilers js:babel-core/register --recursive ./src/**/*.spec.js",
         "build": "babel src -d lib && webpack -p",
-        "deploy": "webpack -p && firebase deploy"
+        "deploy": "cross-env NODE_ENV=\"production\" webpack -p && firebase deploy"
     },
     "author": "Jamie Nuttall",
     "license": "ISC",
@@ -22,7 +22,6 @@
         "global-undom": "^0.1.1",
         "loader-utils": "^1.1.0",
         "lodash": "^4.17.4",
-        "phev-mqtt": "github:papawattu/phev-mqtt",
         "phev-utils": "github:papawattu/phev-utils",
         "react-router-dom": "^4.2.2"
     },

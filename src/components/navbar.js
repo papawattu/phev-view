@@ -8,14 +8,11 @@ import BatteryView from './battery_view'
 import RegisterView from './register_view'
 import OperationsView from './operations_view'
 import ConnectView from './connect_view'
-
-
+import HomeView from './home-view'
 
 const LoginLogout = props => <ul className="nav navbar-nav navbar-right">
     <li><a href="#login" data-toggle="modal" data-target="#login">Login / Register</a></li>
 </ul>
-
-const Home = props => <div>Home</div>
 
 const LoginView = props => <div id="login" className="modal fade" role="dialog">
     <div className="modal-dialog">
@@ -47,25 +44,27 @@ class NavBar extends React.Component {
         const data = this.data
         const operations = this.operations
 
-        return <Router><div><nav className="navbar navbar-inverse">
-            <div className="container-fluid">
-                <ul className="nav navbar-nav">
-                    <li><Link to="/">Home</Link></li>
-                    <li><Link to="/battery">Battery</Link></li>
-                    <li><Link to="/operations">Operations</Link></li>
-                    <li><Link to="/registers">Registers</Link></li>
-                </ul>
-                <LoginLogout />
+        return ( 
+        <Router>
+            <div>
+                <nav className="navbar navbar-inverse">
+                    <div className="container-fluid">
+                        <ul className="nav navbar-nav">
+                            <li><Link to="/">Home</Link></li>
+                            <li><Link to="/battery">Battery</Link></li>
+                            <li><Link to="/operations">Operations</Link></li>
+                            <li><Link to="/registers">Registers</Link></li>
+                        </ul>
+                        <LoginLogout />
+                    </div>
+                </nav>
+                <LoginView/>
+                <Route exact path="/" render={props => (<HomeView data={data} operations={operations}/>)}/>
+                <Route exact path="/battery" render={props => (<BatteryView data={data} operations={operations}/>)}/>
+                <Route exact path="/operations" render={props => (<OperationsView data={data} operations={operations}/>)}/>
+                <Route exact path="/registers" render={props => (<RegisterView data={data} operations={operations}/>)}/>
             </div>
-        </nav>
-            <LoginView/>
-            <Route exact path="/" component={Home}/>
-            <Route exact path="/battery" render={props => (<BatteryView data={data} operations={operations}/>)}/>
-            <Route exact path="/operations" render={props => (<OperationsView data={data} operations={operations}/>)}/>
-            <Route exact path="/registers" render={props => (<RegisterView data={data} operations={operations}/>)}/>
-
-        </div>
-        </Router>
+        </Router>)
     }
 }
 
