@@ -75,7 +75,7 @@ describe('Command messages', () => {
         
         const sut = commandMessages()
         const data1 = {}
-        data1.val = sinon.stub().returns({ 1: { data: Buffer.from([2]), 2: { data: Buffer.from([3]) } } })
+        data1.val = sinon.stub().returns({ 1: { data: Buffer.from([2]) } })
         
         const data2 = {}
         data2.val = sinon.stub().returns({ 2: { data: Buffer.from([3]) } })
