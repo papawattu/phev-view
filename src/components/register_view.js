@@ -15,7 +15,7 @@ const EcuTableBody = props =>
     </tbody>)
 
 const ECUView = props =>
-    (<table className='table'>
+    (<table className='table table-striped'>
         <thead>
             <tr key='header'>
                 <th>Index</th>
@@ -50,7 +50,7 @@ const ListItems = props =>
     </tbody>)
 
 const RegisterTable = props =>
-    (<table className={props.registersClass}>
+    (<table className='table table-striped'>
         <thead>
             <tr key='header'>
                 <th>Register</th>
@@ -67,62 +67,48 @@ class RegisterView extends React.Component {
         this.state = { registers: [], ecuRegisters: [], hidden: false }
 
     }
+    registerUpdate(data) {
+        const updatedRegisters = this.state.registers.slice()
+        const updatedECURegisters = this.state.ecuRegisters.slice()
 
+        const idx = updatedRegisters.findIndex(x => x.register === data.register)
+
+        idx < 0 ? updatedRegisters.push(data) : updatedRegisters[idx] = data
+
+        if (data.register === 22) {
+            const ecuRegs = data.data.slice(1, 6)
+
+            const ecuRegPairs = ecuRegs.reduce((x, y, idx) => {
+                if ((idx % 2) === 0) {
+                    x.push({ byte1: y })
+                    return x
+                } else {
+                    x[Math.trunc(idx / 2)] = _.merge(x[Math.trunc(idx / 2)], { byte2: y })
+                    return x
+                }
+            }, [])
+
+            const ecuRegisters = ecuRegPairs.map(x => ecuRegDecode(x.byte1, x.byte2))
+
+            ecuRegisters.map(x => (updatedECURegisters.find(y => y.idx === x.idx) > -1 ? updatedECURegisters[updatedECURegisters.find(z => z.idx === x.idx)] = x : updatedECURegisters.push(x)))
+        }
+        this.setState({ registers: updatedRegisters, ecuRegisters: updatedECURegisters.sort((a, b) => a.idx - b.idx), hidden: this.state.hidden })
+    }
     componentDidMount() {
 
         const hidden = this.state.hidden
 
         this.registersSub = this.registers
-            .subscribe(data => {
-                const updatedRegisters = this.state.registers.slice()
-                const updatedECURegisters = this.state.ecuRegisters.slice()
-
-                const idx = updatedRegisters.findIndex(x => x.register === data.register)
-
-                idx < 0 ? updatedRegisters.push(data) : updatedRegisters[idx] = data
-
-                if (data.register === 22) {
-                    const ecuRegs = data.data.slice(1, 6)
-
-                    const ecuRegPairs = ecuRegs.reduce((x, y, idx) => {
-                        if ((idx % 2) === 0) {
-                            x.push({ byte1: y })
-                            return x
-                        } else {
-                            x[Math.trunc(idx / 2)] = _.merge(x[Math.trunc(idx / 2)], { byte2: y })
-                            return x
-                        }
-                    }, [])
-
-                    const ecuRegisters = ecuRegPairs.map(x => ecuRegDecode(x.byte1, x.byte2))
-
-                    ecuRegisters.map(x => (updatedECURegisters.find(y => y.idx === x.idx) > -1 ? updatedECURegisters[updatedECURegisters.find(z => z.idx === x.idx)] = x : updatedECURegisters.push(x)))
-                }
-                this.setState({ registers: updatedRegisters, ecuRegisters: updatedECURegisters.sort((a, b) => a.idx - b.idx), hidden: this.state.hidden })
-            })
+            .subscribe(data => this.registerUpdate(data))
     }
 
     componentWillUnmount() {
         this.registersSub.unsubscribe();
     }
     render() {
-        const registersClass = this.state.hidden ? 'hidden table table-striped' : 'table table-striped'
-        const registers = this.state.registers.slice()
-
         return <div>
-            <div className="row">
-                <div className="panel-group">
-                    <div className="panel panel-primary">
-                        <div className="panel-heading">
-                            <h4 className="panel-title">Registers</h4>
-                        </div>
-                        <div className="panel-collapse collapse in">
-                            <div id="collapse1" className="panel-body">
-                                <RegisterTable registers={registers} registersClass={registersClass} />
-                            </div>
-                        </div>
-                    </div>
-                </div>
+            <div>
+                <RegisterTable registers={this.state.registers} />
             </div>
             <div>
                 <ECUView ecuRegs={this.state.ecuRegisters} />
