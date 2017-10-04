@@ -1,5 +1,4 @@
 import { Observable } from 'rxjs'
-import CarService from './car_service'
 import Battery from '../model/battery'
 import AirCon from '../model/aircon'
 import Registers from '../model/registers'
@@ -7,10 +6,7 @@ import { encode } from '../car_message/encoder_decoder'
 import codes from '../ref_data/phev_codes'
 import { log } from 'phev-utils'
 
-const CarController = config => {
-
-    const carService = CarService(config)
-
+const CarController = ({ config, carService }) => {
 
     const sendCommand = (register, value) => carService.sendMessage({register, value: value || 1})
 
