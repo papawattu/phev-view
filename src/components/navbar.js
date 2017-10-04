@@ -10,27 +10,6 @@ import OperationsView from './operations_view'
 import ConnectView from './connect_view'
 import HomeView from './home-view'
 
-const LoginLogout = props => <ul className="nav navbar-nav navbar-right">
-    <li><a href="#login" data-toggle="modal" data-target="#login">Login / Register</a></li>
-</ul>
-
-const LoginView = props => <div id="login" className="modal fade" role="dialog">
-    <div className="modal-dialog">
-        <div className="modal-content">
-            <div className="modal-header">
-                <button type="button" className="close" data-dismiss="modal">&times;</button>
-                <h4 className="modal-title">Modal Header</h4>
-            </div>
-            <div className="modal-body">
-                <p>Some text in the modal.</p>
-            </div>
-            <div className="modal-footer">
-                <button type="button" className="btn btn-default" data-dismiss="modal">Close</button>
-            </div>
-        </div>
-    </div>
-</div>
-
 class NavBar extends React.Component {
 
     constructor(props) {
@@ -55,10 +34,9 @@ class NavBar extends React.Component {
                             <li><Link to="/operations">Operations</Link></li>
                             <li><Link to="/registers">Registers</Link></li>
                         </ul>
-                        <LoginLogout />
+                        <ConnectView data={data}/>
                     </div>
                 </nav>
-                <LoginView/>
                 <Route exact path="/" render={props => (<HomeView data={data} operations={operations}/>)}/>
                 <Route exact path="/battery" render={props => (<BatteryView data={data} operations={operations}/>)}/>
                 <Route exact path="/operations" render={props => (<OperationsView data={data} operations={operations}/>)}/>

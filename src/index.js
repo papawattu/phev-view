@@ -1,4 +1,4 @@
 const App = require('./app').default;
 const config = require('./config').default
-
-new App({ config });
+const firebase = require('firebase')
+new App({ config, firebase });

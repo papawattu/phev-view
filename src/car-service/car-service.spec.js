@@ -1,7 +1,7 @@
 import chai from 'chai';
 import sinon from 'sinon';
 import { Observable } from 'rxjs'
-import CarService from './car_service'
+import CarService from './car-service'
 import config from '../config'
 import EventEmmiter from 'events'
 
