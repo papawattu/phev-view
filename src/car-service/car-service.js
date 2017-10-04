@@ -4,6 +4,7 @@ import { log } from 'phev-utils'
 const CarService = ({ config, firebase }) => {
 
     const registers = Observable.fromEvent(firebase.database().ref('registers'), 'value')
+        .share()
         .map(x => x.val())
         .flatMap(x => Observable.from(Object.keys(x).map(y => ({ register: Number.parseInt(y), data: x[y].data }))))
 

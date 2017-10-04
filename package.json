@@ -9,19 +9,14 @@
         "start-dev": "cross-env NODE_ENV=\"production\" webpack-dev-server --hot",
         "test-unit": "cross-env NODE_ENV=test DEBUG=true mocha --reporter mocha-circleci-reporter --require babel-polyfill --compilers js:babel-core/register --recursive ./src/**/*.spec.js",
         "test-watch": "cross-env NODE_ENV=test DEBUG=true mocha --watch --require babel-polyfill --compilers js:babel-core/register --recursive ./src/**/*.spec.js",
-        "build": "babel src -d lib && webpack -p",
+        "clean": "rimraf lib",
+        "build": "npm run clean && babel src -d lib && webpack -p",
         "deploy": "cross-env NODE_ENV=\"production\" webpack -p && firebase deploy"
     },
     "author": "Jamie Nuttall",
     "license": "ISC",
     "dependencies": {
-        "ajv": "^5.2.3",
-        "bootstrap": "^3.3.7",
-        "express": "^4.16.1",
         "firebase": "^4.5.0",
-        "global-undom": "^0.1.1",
-        "loader-utils": "^1.1.0",
-        "lodash": "^4.17.4",
         "phev-utils": "github:papawattu/phev-utils",
         "react-router-dom": "^4.2.2"
     },
