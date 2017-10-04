@@ -1,6 +1,9 @@
 var path = require('path');
 var webpack = require('webpack');
 
+const PROD = process.env.NODE_ENV === 'production'
+const DEV = process.env.NODE_ENV === 'development'
+
 module.exports = {
     entry: ['./src/index.js'],
     output: {
@@ -26,12 +29,8 @@ module.exports = {
     },
     plugins: [
         new webpack.DefinePlugin({
-            'process.env': {
-                'NODE_ENV': JSON.stringify('production'),
-                'MQTTURI': JSON.stringify('wss://secure.wattu.com:8883/mqtt'),
-                'DEBUG' : JSON.stringify(false),
-                'STUB' : JSON.stringify(true)
-            }
+            'process.env.PRODUCTION': JSON.stringify(PROD),
+            'process.env.DEVELOPMENT': JSON.stringify(DEV),
         }),
     ],
 };

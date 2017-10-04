@@ -5,29 +5,61 @@ import _ from 'lodash'
 
 const ecuRegDecode = (a, b) => ({ idx: a & 63, enbl: ((b >> 1) & 127), val: (((a >> 6) & 3) | ((b << 2) & 4)) })
 
-const ECUView = props => {
+const EcuTableBody = props =>
+    (<tbody>{props.ecuRegs.map(x =>
+        <tr key={x.idx}>
+            <td>{x.idx}</td>
+            <td>{x.enbl}</td>
+            <td>{x.val}</td>
+        </tr>)}
+    </tbody>)
 
-    const ecuTableBody = props.ecuRegs.map(x => <tr>
-        <td>{x.idx}</td>
-        <td>{x.enbl}</td>
-        <td>{x.val}</td>
+const ECUView = props =>
+    (<table className='table table-striped'>
+        <thead>
+            <tr key='header'>
+                <th>Index</th>
+                <th>Enabled</th>
+                <th>Value</th>
+            </tr>
+        </thead>
+        <EcuTableBody ecuRegs={props.ecuRegs} />
+    </table>)
+
+const toHex = dec => (Number.parseInt(dec).toString(16).length < 2 ?
+    '0' + Number.parseInt(dec).toString(16).toUpperCase()
+    : Number.parseInt(dec).toString(16).toUpperCase());
+
+const Data = props => <td>{props.data.map(data => toHex(data) + ' ')}</td>
+
+const evrCodes = _.pickBy(codes, (x, key) => key.includes('_EVR', x.length - 4))
+
+const regLabel = register => _.findKey(evrCodes, label => label === register) ? _.findKey(evrCodes, label => label === register) : 'NO LABEL ' + register
+
+const Row = props =>
+    (<tr>
+        <td>
+            {regLabel(props.register.register)}
+        </td>
+        <Data data={props.register.data} />
     </tr>)
 
-    return <div>
-        <table className='table'>
-            <thead>
-                <tr>
-                    <th>Index</th>
-                    <th>Enabled</th>
-                    <th>Value</th>
-                </tr>
-            </thead>
-            <tbody>
-                {ecuTableBody}
-            </tbody>
-        </table>
-    </div>
-}
+const ListItems = props =>
+    (<tbody>{props.registers.map((reg, idx) =>
+        <Row key={idx} register={reg} />)}
+    </tbody>)
+
+const RegisterTable = props =>
+    (<table className='table table-striped'>
+        <thead>
+            <tr key='header'>
+                <th>Register</th>
+                <th>Data</th>
+            </tr>
+        </thead>
+        <ListItems registers={props.registers} />
+    </table>)
+
 class RegisterView extends React.Component {
     constructor(props) {
         super(props)
@@ -35,80 +67,51 @@ class RegisterView extends React.Component {
         this.state = { registers: [], ecuRegisters: [], hidden: false }
 
     }
+    registerUpdate(data) {
+        const updatedRegisters = this.state.registers.slice()
+        const updatedECURegisters = this.state.ecuRegisters.slice()
 
+        const idx = updatedRegisters.findIndex(x => x.register === data.register)
+
+        idx < 0 ? updatedRegisters.push(data) : updatedRegisters[idx] = data
+
+        if (data.register === 22) {
+            const ecuRegs = data.data.slice(1, 6)
+
+            const ecuRegPairs = ecuRegs.reduce((x, y, idx) => {
+                if ((idx % 2) === 0) {
+                    x.push({ byte1: y })
+                    return x
+                } else {
+                    x[Math.trunc(idx / 2)] = _.merge(x[Math.trunc(idx / 2)], { byte2: y })
+                    return x
+                }
+            }, [])
+
+            const ecuRegisters = ecuRegPairs.map(x => ecuRegDecode(x.byte1, x.byte2))
+
+            ecuRegisters.map(x => (updatedECURegisters.find(y => y.idx === x.idx) > -1 ? updatedECURegisters[updatedECURegisters.find(z => z.idx === x.idx)] = x : updatedECURegisters.push(x)))
+        }
+        this.setState({ registers: updatedRegisters, ecuRegisters: updatedECURegisters.sort((a, b) => a.idx - b.idx), hidden: this.state.hidden })
+    }
     componentDidMount() {
 
         const hidden = this.state.hidden
 
         this.registersSub = this.registers
-            .subscribe(data => {
-                const updatedRegisters = this.state.registers.slice()
-                const updatedECURegisters = this.state.ecuRegisters.slice() 
-                
-                const idx = updatedRegisters.findIndex(x => x.register === data.register)
-
-                idx < 0 ? updatedRegisters.push(data) : updatedRegisters[idx] = data
-
-                if (data.register === 22) {
-                    const ecuRegs = data.data.slice(1, 6)
-
-                    const ecuRegPairs = ecuRegs.reduce((x, y, idx) => {
-                        if((idx % 2) === 0) { 
-                            x.push({ byte1: y })
-                            return x 
-                        } else {
-                            x[Math.trunc(idx / 2)] = _.merge(x[Math.trunc(idx / 2)], { byte2: y })
-                            return x
-                        } 
-                    },[])
-
-                    const ecuRegisters = ecuRegPairs.map(x => ecuRegDecode(x.byte1, x.byte2))
-                    
-                    ecuRegisters.map(x => (updatedECURegisters.find(y => y.idx === x.idx) > -1 ? updatedECURegisters[updatedECURegisters.find(z => z.idx === x.idx)] = x : updatedECURegisters.push(x)))
-                    //ecuRegisters.map(x => updatedECURegisters.findIndex(y => x.idx === y.idx) < 0 ?
-                    //    updatedECURegisters.push(x) : updatedECURegisters[x.idx] = x)
-                }
-
-                this.setState({ registers: updatedRegisters, ecuRegisters: updatedECURegisters.sort((a,b) => a.idx - b.idx), hidden: this.state.hidden })
-            });
+            .subscribe(data => this.registerUpdate(data))
     }
 
     componentWillUnmount() {
         this.registersSub.unsubscribe();
     }
     render() {
-        const registersClass = this.state.hidden ? 'hidden table table-striped' : 'table table-striped'
-        const registers = this.state.registers.slice()
-        const evrCodes = _.pickBy(codes, (x, key) => key.includes('_EVR', x.length - 4))
-        const regLable = register => _.findKey(evrCodes, label => label === register) ? _.findKey(evrCodes, label => label === register) : 'NO LABEL ' + register
-        const toHex = dec => (Number.parseInt(dec).toString(16).length < 2 ?
-            '0' + Number.parseInt(dec).toString(16)
-            : Number.parseInt(dec).toString(16));
-
-        const row = x => <td style={{ width: '2em' }}>{toHex(x)}</td>
-
-        const bob = x => Array.from(x).map(y => row(y))
-        const item = reg => <tr><td key={reg.register}>{regLable(reg.register)}</td>{bob(reg.data)}</tr>
-        const listItems = registers.map(reg => item(reg))
-        const removeLabel = this.state.hidden ? 'Show' : 'Remove'
-        const toggle = () => this.setState({ hidden: !this.state.hidden })
         return <div>
-            <div className="row">
-                <div className="panel-group">
-                    <div className="panel panel-primary">
-                        <div className="panel-heading">
-                            <h4 className="panel-title">Registers</h4>
-                        </div>
-                        <div className="panel-collapse collapse in">
-                            <div id="collapse1" className="panel-body">
-                                <table className={registersClass}><thead><th>Register</th><th>Data</th></thead><tbody>{listItems}</tbody></table>
-                            </div>
-                        </div>
-                    </div>
-                </div>
+            <div>
+                <RegisterTable registers={this.state.registers} />
             </div>
             <div>
-                <ECUView ecuRegs={this.state.ecuRegisters}/>
+                <ECUView ecuRegs={this.state.ecuRegisters} />
             </div>
         </div>
     }

@@ -3,5 +3,6 @@ public/bundle.js
 node_modules
 package-lock.json
 test-results.xml
+*.log
 .idea
 .vscode
