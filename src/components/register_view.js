@@ -1,20 +1,22 @@
 import React from 'react'
 import codes from '../ref_data/phev_codes'
 import _ from 'lodash'
+import { ReplaySubject } from 'rxjs'
 
+const KO_WF_ECU_CUSTOM_INFO_REP_EVR = 22
 
 const ecuRegDecode = (a, b) => ({ idx: a & 63, enbl: ((b >> 1) & 127), val: (((a >> 6) & 3) | ((b << 2) & 4)) })
 
 const EcuTableBody = props =>
-    (<tbody>{props.ecuRegs.map(x =>
-        <tr key={x.idx}>
-            <td>{x.idx}</td>
-            <td>{x.enbl}</td>
-            <td>{x.val}</td>
+    (<tbody>{Array.from(props.ecuRegs).map(x =>
+        <tr key={x[0]}>
+            <td>{x[1].idx}</td>
+            <td>{x[1].enbl}</td>
+            <td>{x[1].val}</td>
         </tr>)}
     </tbody>)
 
-const ECUView = props =>
+const EcuView = props =>
     (<table className='table table-striped'>
         <thead>
             <tr key='header'>
@@ -39,14 +41,14 @@ const regLabel = register => _.findKey(evrCodes, label => label === register) ? 
 const Row = props =>
     (<tr>
         <td>
-            {regLabel(props.register.register)}
+            {regLabel(props.register[0])}
         </td>
-        <Data data={props.register.data} />
+        <Data data={props.register[1]} />
     </tr>)
 
 const ListItems = props =>
-    (<tbody>{props.registers.map((reg, idx) =>
-        <Row key={idx} register={reg} />)}
+    (<tbody>{Array.from(props.registers.entries()).map(reg =>
+        <Row key={reg[0]} register={reg} />)}
     </tbody>)
 
 const RegisterTable = props =>
@@ -63,41 +65,32 @@ const RegisterTable = props =>
 class RegisterView extends React.Component {
     constructor(props) {
         super(props)
+        
         this.registers = props.data.registers
-        this.state = { registers: [], ecuRegisters: [], hidden: false }
+        this.operations = props.operations
+
+        this.state = { registers: new Map(), ecuRegisters: new Map() }
 
     }
-    registerUpdate(data) {
-        const updatedRegisters = this.state.registers.slice()
-        const updatedECURegisters = this.state.ecuRegisters.slice()
-
-        const idx = updatedRegisters.findIndex(x => x.register === data.register)
-
-        idx < 0 ? updatedRegisters.push(data) : updatedRegisters[idx] = data
-
-        if (data.register === 22) {
+    registerUpdate(registers) {
+       /*
+        if(data.register === KO_WF_ECU_CUSTOM_INFO_REP_EVR) {
             const ecuRegs = data.data.slice(1, 6)
-
-            const ecuRegPairs = ecuRegs.reduce((x, y, idx) => {
-                if ((idx % 2) === 0) {
-                    x.push({ byte1: y })
-                    return x
-                } else {
-                    x[Math.trunc(idx / 2)] = _.merge(x[Math.trunc(idx / 2)], { byte2: y })
-                    return x
-                }
-            }, [])
-
-            const ecuRegisters = ecuRegPairs.map(x => ecuRegDecode(x.byte1, x.byte2))
-
-            ecuRegisters.map(x => (updatedECURegisters.find(y => y.idx === x.idx) > -1 ? updatedECURegisters[updatedECURegisters.find(z => z.idx === x.idx)] = x : updatedECURegisters.push(x)))
+            
+            ecuRegisters.set(ecuRegs[0],ecuDecode(ecuRegs[0],ecuRegs[1]))
+            ecuRegisters.set(ecuRegs[2],ecuDecode(ecuRegs[2],ecuRegs[3]))
+            ecuRegisters.set(ecuRegs[4],ecuDecode(ecuRegs[4],ecuRegs[5]))
+            
+        } else {
+            
+            registers.set(data.register,data.data)            
         }
-        this.setState({ registers: updatedRegisters, ecuRegisters: updatedECURegisters.sort((a, b) => a.idx - b.idx), hidden: this.state.hidden })
+        */
+        this.setState({ registers })
     }
     componentDidMount() {
-
-        const hidden = this.state.hidden
-
+        this.count ++
+        this.setState({ count: this.count})
         this.registersSub = this.registers
             .subscribe(data => this.registerUpdate(data))
     }
@@ -111,7 +104,6 @@ class RegisterView extends React.Component {
                 <RegisterTable registers={this.state.registers} />
             </div>
             <div>
-                <ECUView ecuRegs={this.state.ecuRegisters} />
             </div>
         </div>
     }

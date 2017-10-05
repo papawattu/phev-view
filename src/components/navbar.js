@@ -40,7 +40,7 @@ class NavBar extends React.Component {
                 <Route exact path="/" render={props => (<HomeView data={data} operations={operations}/>)}/>
                 <Route exact path="/battery" render={props => (<BatteryView data={data} operations={operations}/>)}/>
                 <Route exact path="/operations" render={props => (<OperationsView data={data} operations={operations}/>)}/>
-                <Route exact path="/registers" render={props => (<RegisterView data={data} operations={operations}/>)}/>
+                <Route exact path="/registers" render={props => (<RegisterView data={data} count={0} operations={operations}/>)}/>
             </div>
         </Router>)
     }
