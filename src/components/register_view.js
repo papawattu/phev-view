@@ -1,9 +1,7 @@
 import React from 'react'
-import codes from '../ref_data/phev_codes'
+import codes from '../data/codes'
 import _ from 'lodash'
 import { ReplaySubject } from 'rxjs'
-
-const KO_WF_ECU_CUSTOM_INFO_REP_EVR = 22
 
 const ecuRegDecode = (a, b) => ({ idx: a & 63, enbl: ((b >> 1) & 127), val: (((a >> 6) & 3) | ((b << 2) & 4)) })
 
@@ -36,7 +34,8 @@ const Data = props => <td>{props.data.map(data => toHex(data) + ' ')}</td>
 
 const evrCodes = _.pickBy(codes, (x, key) => key.includes('_EVR', x.length - 4))
 
-const regLabel = register => _.findKey(evrCodes, label => label === register) ? _.findKey(evrCodes, label => label === register) : 'NO LABEL ' + register
+const regLabel = register => _.findKey(evrCodes, label => label === register) 
+    ? _.findKey(evrCodes, label => label === register) : 'NO LABEL ' + register
 
 const Row = props =>
     (<tr>
