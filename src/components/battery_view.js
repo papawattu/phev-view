@@ -35,14 +35,13 @@ class BatteryView extends React.Component {
     constructor(props) {
         super(props)
         this.battery = props.data.battery
-        this.state = { battery: { soc: 0, charging: false, chargeType: undefined, remaining: 0 } }
+        this.state = { soc: 0, charging: false, chargeType: undefined, remaining: 0 }
 
     }
 
     componentDidMount() {
         this.batterySub = this.battery
-            .map(x => x.battery)
-            .subscribe(data => this.setState({ battery: data }))
+            .subscribe(data => this.setState(data))
     }
 
     componentWillUnmount() {
@@ -55,8 +54,8 @@ class BatteryView extends React.Component {
                 <h4 className="panel-title">Battery</h4>
             </div>
             <div className="panel-body">
-                <BatteryGauge soc={this.state.battery.soc} remaining={this.state.battery.remaining} state={this.state.battery.charging} />
-                <ChargeState chargeType={this.state.battery.chargeType} state={this.state.battery.charging} />
+                <BatteryGauge soc={this.state.soc} remaining={this.state.remaining} state={this.state.charging} />
+                <ChargeState chargeType={this.state.chargeType} state={this.state.charging} />
             </div>
         </div>
     }

@@ -1,5 +1,6 @@
+import { Observable } from 'rxjs'
 
-const Registers = ({ messages }) => messages
-    .filter(x => x.register !== undefined)
-
-export default Registers 
+const Registers = ({ messages }) => 
+    messages.scan((registers, register) => registers.set(register.register,register.data),new Map())
+   
+export default Registers  

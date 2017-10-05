@@ -11,34 +11,19 @@ const timeRemain = remain => {
         + (high < 0 ? high + 0x100 : high)
 
 }
-const Battery = ({ registers }) => {
-    const regs = registers.partition(x => x.register === codes.KO_WF_BATT_LEVEL_INFO_REP_EVR)
-    const soc = regs[0]
-        .map(x => x.data[0])
-        .map(x => (
-            { 
-                battery: 
-                    { 
-                        soc: x 
-                    } 
-                }
-            )
-        )
-    const charging = regs[1]
-        .filter(x => x.register === codes.KO_WF_OBCHG_OK_ON_INFO_REP_EVR)
-        .map(x => (
-            {
-                battery: {
-                    charging: x.data[0] == 1 ? true : false,
-                    remaining: x.data[2] !== 0xff ? timeRemain(x.data) : 0,
-                    chargeType: 'regular'
-                }
-            }
-        ))
-    const battery = Observable.combineLatest(soc,charging)
-        .map(x => _.merge(x[0],x[1]))
- 
-    return battery
-}
+const Battery = ({ registers }) => registers
+        .filter(reg => reg.has(codes.KO_WF_BATT_LEVEL_INFO_REP_EVR) || reg.has(codes.KO_WF_OBCHG_OK_ON_INFO_REP_EVR))
+        .scan((battery,regs) => {
+            battery.soc = regs.get(codes.KO_WF_BATT_LEVEL_INFO_REP_EVR) 
+                ? regs.get(codes.KO_WF_BATT_LEVEL_INFO_REP_EVR)[0] || 0 : 0
+            battery.charging = regs.get(codes.KO_WF_OBCHG_OK_ON_INFO_REP_EVR) ? 
+                regs.get(codes.KO_WF_OBCHG_OK_ON_INFO_REP_EVR)[0] === 1
+                : false
+            battery.remaining = regs.get(codes.KO_WF_OBCHG_OK_ON_INFO_REP_EVR) ?
+                regs.get(codes.KO_WF_OBCHG_OK_ON_INFO_REP_EVR)[2] != 0xff   
+                ? timeRemain(regs.get(codes.KO_WF_OBCHG_OK_ON_INFO_REP_EVR)) : 0 : 0
+            battery.chargeType = 'regular'
+            return battery
+        },{})
 
 export default Battery

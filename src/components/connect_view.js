@@ -20,8 +20,8 @@ class ConnectView extends React.Component {
         this.currentTime = Observable.interval(5000)
             .map(x => new Date())
         this.registersSub = this.registers
-            .filter(x => x.register === codes.KO_WF_DATE_INFO_SYNC_EVR)
-            .map(x => x.data)
+            .filter(x => x.get(codes.KO_WF_DATE_INFO_SYNC_EVR))
+            .map(x => x.get(codes.KO_WF_DATE_INFO_SYNC_EVR))
             .map(x => new Date(x[0] + 2000,x[1]-1,x[2],x[3]+1,x[4],x[5]))
             
         this.connection = Observable.combineLatest([this.registersSub,this.currentTime])
@@ -30,6 +30,7 @@ class ConnectView extends React.Component {
 
     componentWillUnmount() {
         this.connection.unsubscribe()
+        this.currentTime.unsubscribe()
     }
     render() {
         const lastUpdated = this.state.lastUpdated
