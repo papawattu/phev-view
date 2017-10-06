@@ -33,7 +33,9 @@ const socZeroRegisters = Observable.from([registerMapSOCZero])
 const obcRegisters = Observable.from([registerMapOBC])
 const obcFalseRegisters = Observable.from([registerMapOBCFalse])
 
-const socObcRegisters = Observable.from([registerMapSOC, registerMapOBC])
+const socOBCRegisters = Observable.from([registerMapSOC, registerMapOBC])
+
+const obcSOCRegisters = Observable.from([registerMapOBC, registerMapSOC])
 
 let battery
 describe('Battery', () => {
@@ -88,7 +90,20 @@ describe('Battery', () => {
     it('Should return soc of 50 after obc register', done => {
 
         battery = Battery({
-            registers: socObcRegisters
+            registers: socOBCRegisters
+        })
+        const sub = battery
+            .skip(1)
+            .subscribe(batt => {
+                assert.equal(batt.charging, true)
+                assert.equal(batt.soc, 50)
+                done()
+            })
+    })
+    it('Should return soc of 50 after obc register', done => {
+
+        battery = Battery({
+            registers: obcSOCRegisters
         })
         const sub = battery
             .skip(1)

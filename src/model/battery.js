@@ -42,4 +42,5 @@ const Battery = ({
     .filter(reg => batteryRegister(reg))
     .scan((batt, register) => batteryBuilder(register), battery)
     .map(batt => _.merge(battery,batt))
+
 export default Battery
