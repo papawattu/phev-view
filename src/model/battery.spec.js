@@ -87,11 +87,9 @@ describe('Battery', () => {
     })
     it('Should return soc of 50 after obc register', done => {
 
-        let x = undefined
         battery = Battery({
             registers: socObcRegisters
         })
-        console.log('here')
         const sub = battery
             .skip(1)
             .subscribe(batt => {
