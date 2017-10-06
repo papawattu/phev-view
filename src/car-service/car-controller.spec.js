@@ -12,6 +12,7 @@ obj.map = sinon.stub().returnsThis()
 obj.filter = sinon.stub().returnsThis()
 registers.filter = sinon.stub().returnsThis()
 registers.partition = sinon.stub().returns([obj])
+registers.scan = sinon.stub()
 
 carService.commandMessages = sinon.stub().returns(registers)
 
