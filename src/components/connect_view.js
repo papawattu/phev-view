@@ -1,5 +1,5 @@
 import React from 'react'
-import codes from '../ref_data/phev_codes'
+import codes from '../data/codes'
 import { Observable } from 'rxjs'
 
 const isDisconnected = () => <h4><span className="pull-right label label-danger">Disconnected <span className="glyphicon glyphicon-ban-circle" aria-hidden="true"/></span></h4>

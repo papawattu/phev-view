@@ -2,7 +2,7 @@ import { Observable } from 'rxjs'
 import Battery from '../model/battery'
 import AirCon from '../model/aircon'
 import Registers from '../model/registers'
-import codes from '../ref_data/phev_codes'
+import codes from '../data/codes'
 import { log } from 'phev-utils'
 
 const CarController = ({ config, carService, dataHandlers }) => {
