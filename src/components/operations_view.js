@@ -1,5 +1,5 @@
 import React from 'react'
-
+import { Observable } from 'rxjs'
 const AirConButton = props => <button onClick={props.airConClick} className={(props.enabled ? "btn btn-success" : "btn btn-primary")}>Air Conditioning</button>
 const HeadLightsButton = props => <button onClick={props.headLightClick} className={(props.enabled ? "btn btn-success" : "btn btn-primary")}>Head Lights</button>
 const ParkLightsButton = props => <button onClick={props.parkLightClick} className={(props.enabled ? "btn btn-success" : "btn btn-primary")}><span className="glyphicon glyphicon-lightbulb"></span>Parking Lights</button>
@@ -60,6 +60,7 @@ class OperationsView extends React.Component {
 
     componentWillUnmount() {
         this.airConSub.unsubscribe();
+        this.lightsSub.unsubscribe();
     }
     render() {
 
@@ -68,6 +69,14 @@ class OperationsView extends React.Component {
         const airConEnabled = this.state.airCon.enabled
         const headLightsEnabled = this.state.lights.headLightsOn
         const parkingLightsEnabled = true
+
+        const headLightsClick = () => Observable.fromPromise(operations.headLights())
+            .catch(err => Observable.of(`Error ${err}`))
+            .subscribe(result => {
+                console.log('ok')
+            })
+            
+
 
         return <div className="panel panel-primary">
             <div className="panel-heading">
@@ -87,7 +96,7 @@ class OperationsView extends React.Component {
                         <h4 className="bold">Turn head lights {headLightsEnabled ? 'off' : 'on'}</h4>
                     </div>
                     <div className="col-sm-4">
-                        <HeadLightsButton headLightClick={operations.headLights} enabled={headLightsEnabled}/>
+                        <HeadLightsButton headLightClick={headLightsClick} enabled={headLightsEnabled}/>
                     </div>
                 </div>
                 <div className="row">
