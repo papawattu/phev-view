@@ -6,7 +6,8 @@
     "scripts": {
         "test": "npm run test-unit",
         "start": "node index.js",
-        "start-dev": "cross-env NODE_ENV=\"production\" webpack-dev-server --hot",
+        "start-dev": "cross-env NODE_ENV=\"development\" webpack-dev-server --hot",
+        "start-prod": "cross-env NODE_ENV=\"production\" webpack-dev-server --hot",
         "test-unit": "cross-env NODE_ENV=test DEBUG=true mocha --reporter mocha-circleci-reporter --require babel-polyfill --compilers js:babel-core/register --recursive ./src/**/*.spec.js",
         "test-watch": "cross-env NODE_ENV=test DEBUG=true mocha --watch --require babel-polyfill --compilers js:babel-core/register --recursive ./src/**/*.spec.js",
         "clean": "rimraf lib",
