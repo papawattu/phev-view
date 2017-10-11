@@ -47,7 +47,8 @@ class OperationsView extends React.Component {
                 enabled: this.airCon.enabled
             }, 
             lights: {
-                headLightsOn: this.lights.headLightsOn
+                headLightsOn: this.lights.headLightsOn,
+                parkingLightsOn: this.lights.parkingLightsOn
             }
         }
     }
@@ -68,7 +69,7 @@ class OperationsView extends React.Component {
         
         const airConEnabled = this.state.airCon.enabled
         const headLightsEnabled = this.state.lights.headLightsOn
-        const parkingLightsEnabled = true
+        const parkingLightsEnabled = this.state.lights.parkingLightsOn
 
         const headLightsClick = () => Observable.fromPromise(operations.headLights())
             .catch(err => Observable.of(`Error ${err}`))
@@ -109,9 +110,9 @@ class OperationsView extends React.Component {
                 </div>
                 <div className="row">
                     <div className="col-sm-2">
-                        <div className="collapse">
-                            <div className="collapse in">
-                                <CustomCommand sendCommand={operations.custom} />
+                        <div>
+                            <div>
+                                <CustomCommand sendCommand={operations.sendCommand} />
                             </div>
                         </div>
                     </div>

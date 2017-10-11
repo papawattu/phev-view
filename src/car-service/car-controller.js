@@ -18,6 +18,7 @@ const CarController = ({ config, carService, dataHandlers }) => {
         airCon: () => sendCommand(codes.KO_WF_MANUAL_AC_ON_RQ_SP, 2),
         headLights: () => sendCommand(codes.KO_WF_H_LAMP_CONT_SP),
         parkLights: () => sendCommand(codes.KO_WF_P_LAMP_CONT_SP),
+        sendCommand
     }
 
     const data = dataHandlers
