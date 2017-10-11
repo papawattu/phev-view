@@ -41,12 +41,21 @@ class OperationsView extends React.Component {
         this.operations = props.operations
         this.data = props.data
         this.airCon = props.data.airCon
-        console.log(JSON.stringify(this.airCon))
-        this.state = { airCon: { enabled: this.airCon.enabled}}
+        this.lights = props.data.lights
+        this.state = { 
+            airCon: { 
+                enabled: this.airCon.enabled
+            }, 
+            lights: {
+                headLightsOn: this.lights.headLightsOn
+            }
+        }
     }
     componentDidMount() {
         this.airConSub = this.airCon
             .subscribe(data => this.setState({airCon: data}))
+        this.lightsSub = this.lights
+            .subscribe(data => this.setState({lights: data}))
     }
 
     componentWillUnmount() {
@@ -57,7 +66,7 @@ class OperationsView extends React.Component {
         const operations = this.operations
         
         const airConEnabled = this.state.airCon.enabled
-        const headLightsEnabled = true
+        const headLightsEnabled = this.state.lights.headLightsOn
         const parkingLightsEnabled = true
 
         return <div className="panel panel-primary">
