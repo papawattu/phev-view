@@ -16,6 +16,4 @@ ee.on('newListener', () => {
     
 })
 
-    ee.emit('value', data)
-
 export default firebase

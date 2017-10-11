@@ -13,10 +13,6 @@ const CarController = ({ config, carService, dataHandlers }) => {
 
     const registers = Registers({ messages })
 
-//    const battery = Battery({ registers })
-
- //   const airCon = AirCon({ registers })
-
     const operations = {
         update: () => sendCommand(codes.KO_WF_EV_UPDATE_SP, 3),
         airCon: () => sendCommand(codes.KO_WF_MANUAL_AC_ON_RQ_SP, 2),
@@ -24,9 +20,8 @@ const CarController = ({ config, carService, dataHandlers }) => {
         parkLights: () => sendCommand(codes.KO_WF_P_LAMP_CONT_SP),
     }
 
-    //const Data = ({ registers }) => ({ battery : Battery({ registers }), registers, airCon: AirCon({ registers }) })
     const data = dataHandlers
-        .map((handler) => handler ? [handler[0],handler[1]({ registers })]: undefined)
+        .map((handler) => [handler[0],handler[1]({ registers })])
         .reduce((cur, handler) => 
             {
                 cur[handler[0]] = handler[1]

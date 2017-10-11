@@ -77,8 +77,7 @@ describe('Command messages', () => {
         const data1 = {}
         data1.val = sinon.stub().returns({ 1: { data: Buffer.from([2]) } })
         
-        const data2 = {}
-        data2.val = sinon.stub().returns({ 2: { data: Buffer.from([3]) } })
+        const data2 = { key: '2', val: () => ({ data: Buffer.from([3]) }) }
         
         const sub = sut.subscribe(x => {
             if (data1.val.called) {
@@ -92,6 +91,6 @@ describe('Command messages', () => {
         })
 
         ee.emit('value', data1)
-        ee.emit('value', data2)
+        ee.emit('child_changed', data2)
     })
 })

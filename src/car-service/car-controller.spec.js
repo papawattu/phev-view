@@ -32,13 +32,6 @@ describe('Car Controller', () => {
         assert(data)
         assert(operations)
     })
-    it('Should call handlers with registers', () => {
-        const stub = sinon.stub()
-
-        dataHandlers.push(['battery', stub])
-        data = CarController({ config, carService, dataHandlers }).data
-        assert(stub.calledWith({ registers: registers }))
-    })
     it('Should return data object with handler name', () => {
         const stub = sinon.stub().returns({ battery: {} })
 
