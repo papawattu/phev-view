@@ -39,13 +39,24 @@ class OperationsView extends React.Component {
     constructor(props) {
         super(props)
         this.operations = props.operations
-        this.data = props.operations
+        this.data = props.data
+        this.airCon = props.data.airCon
+        console.log(JSON.stringify(this.airCon))
+        this.state = { airCon: { enabled: this.airCon.enabled}}
+    }
+    componentDidMount() {
+        this.airConSub = this.airCon
+            .subscribe(data => this.setState({airCon: data}))
+    }
+
+    componentWillUnmount() {
+        this.airConSub.unsubscribe();
     }
     render() {
 
         const operations = this.operations
         
-        const airConEnabled = true
+        const airConEnabled = this.state.airCon.enabled
         const headLightsEnabled = true
         const parkingLightsEnabled = true
 
