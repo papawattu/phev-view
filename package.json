@@ -20,6 +20,7 @@
     "dependencies": {
         "firebase": "^4.5.0",
         "phev-utils": "github:papawattu/phev-utils",
+        "react-modal-bootstrap": "^1.1.1",
         "react-router-dom": "^4.2.2"
     },
     "devDependencies": {

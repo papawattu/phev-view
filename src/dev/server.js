@@ -17,4 +17,4 @@ app.post('/send', (req, res) => {
 })
 
 app.listen(8080)
-console.log('Running stub server on port 8080')
+console.log('Running stub server on port 8080 ')

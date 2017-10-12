@@ -1,5 +1,15 @@
 import React from 'react'
-import { Observable } from 'rxjs'
+import { Observable, Subject } from 'rxjs'
+import {
+  Modal,
+  ModalHeader,
+  ModalTitle,
+  ModalBody,
+  ModalClose,
+  ModalFooter
+} from './modal'
+
+const DEBOUNCE_TIME = 500
 const AirConButton = props => <button onClick={props.airConClick} className={(props.enabled ? "btn btn-success" : "btn btn-primary")}>Air Conditioning</button>
 const HeadLightsButton = props => <button onClick={props.headLightClick} className={(props.enabled ? "btn btn-success" : "btn btn-primary")}>Head Lights</button>
 const ParkLightsButton = props => <button onClick={props.parkLightClick} className={(props.enabled ? "btn btn-success" : "btn btn-primary")}><span className="glyphicon glyphicon-lightbulb"></span>Parking Lights</button>
@@ -42,6 +52,13 @@ class OperationsView extends React.Component {
         this.data = props.data
         this.airCon = props.data.airCon
         this.lights = props.data.lights
+
+        this.headLightSubject = new Subject()
+            .debounceTime(DEBOUNCE_TIME)
+            .switchMap(() => Observable.fromPromise(this.operations.headLights(!this.state.lights.headLightsOn))
+                .catch(err => Observable.of({ status: 500})))
+            .map(response => response.status)
+        
         this.state = { 
             airCon: { 
                 enabled: this.airCon.enabled
@@ -49,7 +66,8 @@ class OperationsView extends React.Component {
             lights: {
                 headLightsOn: this.lights.headLightsOn,
                 parkingLightsOn: this.lights.parkingLightsOn
-            }
+            },
+            error: undefined,
         }
     }
     componentDidMount() {
@@ -57,11 +75,22 @@ class OperationsView extends React.Component {
             .subscribe(data => this.setState({airCon: data}))
         this.lightsSub = this.lights
             .subscribe(data => this.setState({lights: data}))
+        this.headLightSubjectSub = this.headLightSubject
+            .subscribe(status => {
+                if(status !== 200) {
+                    this.setState({ error: 'Failed to change head lights'  })
+                }        
+            })
     }
 
     componentWillUnmount() {
-        this.airConSub.unsubscribe();
-        this.lightsSub.unsubscribe();
+        this.airConSub.unsubscribe()
+        this.lightsSub.unsubscribe()
+        this.headLightSubjectSub.unsubscribe()
+    }
+
+    hideModal() {
+        this.setState({ error: undefined })
     }
     render() {
 
@@ -70,14 +99,24 @@ class OperationsView extends React.Component {
         const airConEnabled = this.state.airCon.enabled
         const headLightsEnabled = this.state.lights.headLightsOn
         const parkingLightsEnabled = this.state.lights.parkingLightsOn
-
-        const headLightsClick = () => Observable.fromPromise(operations.headLights())
-            .catch(err => Observable.of(`Error ${err}`))
-            .subscribe(result => {
-                console.log('ok')
-            })
-            
-
+        const headLightsClick = event => {
+            this.headLightSubject.next(event)
+        }
+        
+        const hideModal = this.hideModal.bind(this)
+        
+        const errors = this.state.error !== undefined ? <Modal>
+                <ModalHeader>
+                    <ModalClose close={hideModal}/>
+                    <ModalTitle>Error</ModalTitle>
+                </ModalHeader>
+                <ModalBody>
+                    <p>{this.state.error}</p>
+                </ModalBody>
+            <ModalFooter>
+                <button className='btn btn-default' onClick={hideModal}>Close</button>
+            </ModalFooter>
+        </Modal> : ''
 
         return <div className="panel panel-primary">
             <div className="panel-heading">
@@ -118,6 +157,7 @@ class OperationsView extends React.Component {
                     </div>
                 </div>
             </div>
+            {errors}
         </div>
 
     }
