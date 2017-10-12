@@ -49,7 +49,7 @@ class BatteryView extends React.Component {
     }
 
     render() {
-        return <div className="panel panel-primary">
+        return <div className="panel panel-default">
             <div className="panel-heading">
                 <h4 className="panel-title">Battery</h4>
             </div>

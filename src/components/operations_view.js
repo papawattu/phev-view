@@ -10,9 +10,9 @@ import {
 } from './modal'
 
 const DEBOUNCE_TIME = 500
-const AirConButton = props => <button onClick={props.airConClick} className={'btn-block' + (props.enabled ? "btn btn-success" : "btn btn-primary")}>Air Conditioning</button>
-const HeadLightsButton = props => <button onClick={props.headLightClick} className={'btn-block' + (props.enabled ? "btn btn-success" : "btn btn-primary")}>Head Lights</button>
-const ParkLightsButton = props => <button onClick={props.parkLightClick} className={'btn-block' + (props.enabled ? "btn btn-success" : "btn btn-primary")}><span className="glyphicon glyphicon-lightbulb"></span>Parking Lights</button>
+const AirConButton = props => <button onClick={props.airConClick} className={(props.enabled ? "btn btn-success" : "btn btn-primary")}>Air Conditioning</button>
+const HeadLightsButton = props => <button onClick={props.headLightClick} className={(props.enabled ? "btn btn-success" : "btn btn-primary")}>Head Lights</button>
+const ParkLightsButton = props => <button onClick={props.parkLightClick} className={(props.enabled ? "btn btn-success" : "btn btn-primary")}><span className="glyphicon glyphicon-lightbulb"></span>Parking Lights</button>
 
 class CustomCommand extends React.Component {
 
@@ -148,7 +148,7 @@ class OperationsView extends React.Component {
             </ModalFooter>
         </Modal> : ''
 
-        return <div className="panel panel-primary">
+        return <div className="panel panel-default">
             <div className="panel-heading">
                 <h4 className="panel-title">Operations</h4>
             </div>
