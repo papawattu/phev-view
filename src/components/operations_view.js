@@ -10,9 +10,9 @@ import {
 } from './modal'
 
 const DEBOUNCE_TIME = 500
-const AirConButton = props => <button onClick={props.airConClick} className={(props.enabled ? "btn btn-success" : "btn btn-primary")}>Air Conditioning</button>
-const HeadLightsButton = props => <button onClick={props.headLightClick} className={(props.enabled ? "btn btn-success" : "btn btn-primary")}>Head Lights</button>
-const ParkLightsButton = props => <button onClick={props.parkLightClick} className={(props.enabled ? "btn btn-success" : "btn btn-primary")}><span className="glyphicon glyphicon-lightbulb"></span>Parking Lights</button>
+const AirConButton = props => <button onClick={props.airConClick} className={'btn-block' + (props.enabled ? "btn btn-success" : "btn btn-primary")}>Air Conditioning</button>
+const HeadLightsButton = props => <button onClick={props.headLightClick} className={'btn-block' + (props.enabled ? "btn btn-success" : "btn btn-primary")}>Head Lights</button>
+const ParkLightsButton = props => <button onClick={props.parkLightClick} className={'btn-block' + (props.enabled ? "btn btn-success" : "btn btn-primary")}><span className="glyphicon glyphicon-lightbulb"></span>Parking Lights</button>
 
 class CustomCommand extends React.Component {
 
@@ -58,6 +58,16 @@ class OperationsView extends React.Component {
             .switchMap(() => Observable.fromPromise(this.operations.headLights(!this.state.lights.headLightsOn))
                 .catch(err => Observable.of({ status: 500})))
             .map(response => response.status)
+        this.airConSubject = new Subject()
+            .debounceTime(DEBOUNCE_TIME)
+            .switchMap(() => Observable.fromPromise(this.operations.airCon(!this.state.airCon.enabled))
+                .catch(err => Observable.of({ status: 500})))
+            .map(response => response.status)
+        this.parkLightsSubject = new Subject()
+            .debounceTime(DEBOUNCE_TIME)
+            .switchMap(() => Observable.fromPromise(this.operations.parkLights(!this.state.lights.parkingLightsOn))
+                .catch(err => Observable.of({ status: 500})))
+            .map(response => response.status)
         
         this.state = { 
             airCon: { 
@@ -78,15 +88,30 @@ class OperationsView extends React.Component {
         this.headLightSubjectSub = this.headLightSubject
             .subscribe(status => {
                 if(status !== 200) {
-                    this.setState({ error: 'Failed to change head lights'  })
+                    this.setState({ error: 'Server communications error - Failed to change head lights'  })
                 }        
             })
+        this.airConSubjectSub = this.airConSubject
+            .subscribe(status => {
+                if(status !== 200) {
+                    this.setState({ error: 'Server communications error - Failed to change air conditioning'  })
+                }        
+            })
+        this.parkLightsSubjectSub = this.parkLightsSubject
+            .subscribe(status => {
+                if(status !== 200) {
+                    this.setState({ error: 'Server communications error - Failed to change parking lights'  })
+                }        
+            })
+
     }
 
     componentWillUnmount() {
         this.airConSub.unsubscribe()
+        this.airConSubjectSub.unsubscribe()
         this.lightsSub.unsubscribe()
         this.headLightSubjectSub.unsubscribe()
+        this.parkLightsSubjectSub.unsubscribe()
     }
 
     hideModal() {
@@ -102,7 +127,12 @@ class OperationsView extends React.Component {
         const headLightsClick = event => {
             this.headLightSubject.next(event)
         }
-        
+        const airConClick = event => {
+            this.airConSubject.next(event)
+        }
+        const parkLightsClick = event => {
+            this.parkLightsSubject.next(event)
+        }
         const hideModal = this.hideModal.bind(this)
         
         const errors = this.state.error !== undefined ? <Modal>
@@ -128,7 +158,7 @@ class OperationsView extends React.Component {
                         <h4 className="bold">Turn air conditioning {airConEnabled ? 'off' : 'on'}</h4>
                     </div>
                     <div className="col-sm-4">
-                        <AirConButton airConClick={operations.airCon} enabled={airConEnabled}/>
+                        <AirConButton airConClick={airConClick} enabled={airConEnabled}/>
                     </div>
                 </div>
                 <div className="row">
@@ -144,7 +174,7 @@ class OperationsView extends React.Component {
                         <h4 className="bold">Turn parking lights {parkingLightsEnabled ? 'off' : 'on'}</h4>
                     </div>
                     <div className="col-sm-4">
-                        <ParkLightsButton parkLightClick={operations.parkLights} enabled={parkingLightsEnabled}/>
+                        <ParkLightsButton parkLightClick={parkLightsClick} enabled={parkingLightsEnabled}/>
                     </div>
                 </div>
                 <div className="row">
