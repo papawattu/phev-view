@@ -23,26 +23,24 @@ class NavBar extends React.Component {
         const data = this.data
         const operations = this.operations
 
-        return ( 
-        <Router>
-            <div>
-                <nav className="navbar navbar-inverse">
-                    <div className="container-fluid">
+        return (
+            <Router>
+                <div>
+                    <nav className="navbar navbar-static-top">
                         <ul className="nav navbar-nav">
-                            <li><Link to="/">Home</Link></li>
-                            <li><Link to="/battery">Battery</Link></li>
-                            <li><Link to="/operations">Operations</Link></li>
-                            <li><Link to="/registers">Registers</Link></li>
+                            <li className="nav-item"><Link to="/"><span className="glyphicon glyphicon-home" aria-hidden="true"></span> Home</Link></li>
+                            <li className="nav-item"><Link to="/battery"><span className="glyphicon glyphicon-flash" aria-hidden="true"></span> Battery</Link></li>
+                            <li className="nav-item"><Link to="/operations"><span className="glyphicon glyphicon-off" aria-hidden="true"></span> Operations</Link></li>
+                            <li className="nav-item"><Link to="/registers"><span className="glyphicon glyphicon-list" aria-hidden="true"></span> Registers</Link></li>
                         </ul>
-                        <ConnectView data={data}/>
-                    </div>
-                </nav>
-                <Route exact path="/" render={props => (<HomeView data={data} operations={operations}/>)}/>
-                <Route exact path="/battery" render={props => (<BatteryView data={data} operations={operations}/>)}/>
-                <Route exact path="/operations" render={props => (<OperationsView data={data} operations={operations}/>)}/>
-                <Route exact path="/registers" render={props => (<RegisterView data={data} count={0} operations={operations}/>)}/>
-            </div>
-        </Router>)
+                        <ConnectView data={data} />
+                    </nav>
+                    <Route exact path="/" render={props => (<HomeView data={data} operations={operations} />)} />
+                    <Route exact path="/battery" render={props => (<BatteryView data={data} operations={operations} />)} />
+                    <Route exact path="/operations" render={props => (<OperationsView data={data} operations={operations} />)} />
+                    <Route exact path="/registers" render={props => (<RegisterView data={data} count={0} operations={operations} />)} />
+                </div>
+            </Router>)
     }
 }
 

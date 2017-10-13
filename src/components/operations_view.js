@@ -1,18 +1,39 @@
 import React from 'react'
 import { Observable, Subject } from 'rxjs'
 import {
-  Modal,
-  ModalHeader,
-  ModalTitle,
-  ModalBody,
-  ModalClose,
-  ModalFooter
+    Modal,
+    ModalHeader,
+    ModalTitle,
+    ModalBody,
+    ModalClose,
+    ModalFooter
 } from './modal'
 
 const DEBOUNCE_TIME = 500
-const AirConButton = props => <button onClick={props.airConClick} className={(props.enabled ? "btn btn-success" : "btn btn-primary")}>Air Conditioning</button>
-const HeadLightsButton = props => <button onClick={props.headLightClick} className={(props.enabled ? "btn btn-success" : "btn btn-primary")}>Head Lights</button>
-const ParkLightsButton = props => <button onClick={props.parkLightClick} className={(props.enabled ? "btn btn-success" : "btn btn-primary")}><span className="glyphicon glyphicon-lightbulb"></span>Parking Lights</button>
+const OnOffButton = props => <div className="btn-group pull-right">
+                                    <button className="btn btn-default disabled">On</button><button className="btn btn-default">Off</button>
+                                </div>
+
+const AirConButton = props => <button onClick={!props.disabled ? props.airConClick : () => undefined} className={props.disabled ? "disabled" : "" + (props.enabled ? "btn btn-success" : "btn btn-default")}>Air Conditioning</button>
+const ParkLightsButton = props => <button onClick={props.enabled ? props.airConClick : () => undefined } className={(props.enabled ? "btn btn-success" : "btn btn-default")}><span className="glyphicon glyphicon-lightbulb"></span>Parking Lights</button>
+const HeadLightsButton = props => <button onClick={props.enabled ? props.airConClick : () => undefined} className={(props.enabled ? "btn btn-success" : "btn btn-default")}>Head Lights</button>
+
+const AirCon = props => <div><label>Air Conditioning</label> <OnOffButton {...props}/></div>
+const HeadLights = props => <label>Head Lights <HeadLightsButton {...props}/></label>
+const ParkLights = props => <label>Parking Lights <ParkLightsButton {...props}/></label>
+
+const ErrorModal = props => props.error !== undefined ? <Modal>
+            <ModalHeader>
+                <ModalClose close={props.hideModal} />
+                <ModalTitle>Error</ModalTitle>
+            </ModalHeader>
+            <ModalBody>
+                <p>{props.error}</p>
+            </ModalBody>
+            <ModalFooter>
+                <button className='btn btn-default' onClick={props.hideModal}>Close</button>
+            </ModalFooter>
+        </Modal> : null
 
 class CustomCommand extends React.Component {
 
@@ -56,54 +77,54 @@ class OperationsView extends React.Component {
         this.headLightSubject = new Subject()
             .debounceTime(DEBOUNCE_TIME)
             .switchMap(() => Observable.fromPromise(this.operations.headLights(!this.state.lights.headLightsOn))
-                .catch(err => Observable.of({ status: 500})))
+                .catch(err => Observable.of({ status: 500 })))
             .map(response => response.status)
         this.airConSubject = new Subject()
             .debounceTime(DEBOUNCE_TIME)
             .switchMap(() => Observable.fromPromise(this.operations.airCon(!this.state.airCon.enabled))
-                .catch(err => Observable.of({ status: 500})))
+                .catch(err => Observable.of({ status: 500 })))
             .map(response => response.status)
         this.parkLightsSubject = new Subject()
             .debounceTime(DEBOUNCE_TIME)
             .switchMap(() => Observable.fromPromise(this.operations.parkLights(!this.state.lights.parkingLightsOn))
-                .catch(err => Observable.of({ status: 500})))
+                .catch(err => Observable.of({ status: 500 })))
             .map(response => response.status)
-        
-        this.state = { 
-            airCon: { 
+
+        this.state = {
+            airCon: {
                 enabled: this.airCon.enabled
-            }, 
+            },
             lights: {
                 headLightsOn: this.lights.headLightsOn,
                 parkingLightsOn: this.lights.parkingLightsOn
             },
             error: undefined,
         }
+
     }
     componentDidMount() {
         this.airConSub = this.airCon
-            .subscribe(data => this.setState({airCon: data}))
+            .subscribe(data => this.setState({ airCon: data }))
         this.lightsSub = this.lights
-            .subscribe(data => this.setState({lights: data}))
+            .subscribe(data => this.setState({ lights: data }))
         this.headLightSubjectSub = this.headLightSubject
             .subscribe(status => {
-                if(status !== 200) {
-                    this.setState({ error: 'Server communications error - Failed to change head lights'  })
-                }        
+                if (status !== 200) {
+                    this.setState({ error: 'Server communications error - Failed to change head lights' })
+                }
             })
         this.airConSubjectSub = this.airConSubject
             .subscribe(status => {
-                if(status !== 200) {
-                    this.setState({ error: 'Server communications error - Failed to change air conditioning'  })
-                }        
+                if (status !== 200) {
+                    this.setState({ error: 'Server communications error - Failed to change air conditioning' })
+                }
             })
         this.parkLightsSubjectSub = this.parkLightsSubject
             .subscribe(status => {
-                if(status !== 200) {
-                    this.setState({ error: 'Server communications error - Failed to change parking lights'  })
-                }        
+                if (status !== 200) {
+                    this.setState({ error: 'Server communications error - Failed to change parking lights' })
+                }
             })
-
     }
 
     componentWillUnmount() {
@@ -120,7 +141,7 @@ class OperationsView extends React.Component {
     render() {
 
         const operations = this.operations
-        
+
         const airConEnabled = this.state.airCon.enabled
         const headLightsEnabled = this.state.lights.headLightsOn
         const parkingLightsEnabled = this.state.lights.parkingLightsOn
@@ -134,60 +155,36 @@ class OperationsView extends React.Component {
             this.parkLightsSubject.next(event)
         }
         const hideModal = this.hideModal.bind(this)
-        
-        const errors = this.state.error !== undefined ? <Modal>
-                <ModalHeader>
-                    <ModalClose close={hideModal}/>
-                    <ModalTitle>Error</ModalTitle>
-                </ModalHeader>
-                <ModalBody>
-                    <p>{this.state.error}</p>
-                </ModalBody>
-            <ModalFooter>
-                <button className='btn btn-default' onClick={hideModal}>Close</button>
-            </ModalFooter>
-        </Modal> : ''
 
-        return <div className="panel panel-default">
-            <div className="panel-heading">
-                <h4 className="panel-title">Operations</h4>
-            </div>
-            <div className="panel-body">
-                <div className="row">
-                    <div className="col-sm-8">
-                        <h4 className="bold">Turn air conditioning {airConEnabled ? 'off' : 'on'}</h4>
-                    </div>
-                    <div className="col-sm-4">
-                        <AirConButton airConClick={airConClick} enabled={airConEnabled}/>
-                    </div>
+        return <div className="col-lg-6">
+            <div className="panel panel-default">
+                <div className="panel-heading">
+                    <h4 className="panel-title">Operations</h4>
                 </div>
-                <div className="row">
-                    <div className="col-sm-8">
-                        <h4 className="bold">Turn head lights {headLightsEnabled ? 'off' : 'on'}</h4>
-                    </div>
-                    <div className="col-sm-4">
-                        <HeadLightsButton headLightClick={headLightsClick} enabled={headLightsEnabled}/>
-                    </div>
-                </div>
-                <div className="row">
-                    <div className="col-sm-8">
-                        <h4 className="bold">Turn parking lights {parkingLightsEnabled ? 'off' : 'on'}</h4>
-                    </div>
-                    <div className="col-sm-4">
-                        <ParkLightsButton parkLightClick={parkLightsClick} enabled={parkingLightsEnabled}/>
-                    </div>
-                </div>
-                <div className="row">
-                    <div className="col-sm-2">
+                <div className="panel-body">
+                    <div>
                         <div>
+                            <ul className="list-group">
+                                <li className="list-group-item"><AirCon airConClick={airConClick} enabled={airConEnabled}/></li>
+                                <li className="list-group-item"><AirCon airConClick={airConClick} enabled={airConEnabled}/></li>
+                            </ul>
+                            
+                            <HeadLights headLightClick={headLightsClick} enabled={headLightsEnabled} />
+                            <ParkLights parkLightClick={parkLightsClick} enabled={parkingLightsEnabled} />
+                        </div>
+                    </div>
+                    <div className="row">
+                        <div className="col-sm-2">
                             <div>
-                                <CustomCommand sendCommand={operations.sendCommand} />
+                                <div>
+                                    <CustomCommand sendCommand={operations.sendCommand} />
+                                </div>
                             </div>
                         </div>
                     </div>
                 </div>
+                <ErrorModal error={this.state.error} hideModal={hideModal}/>>
             </div>
-            {errors}
         </div>
 
     }

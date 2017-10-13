@@ -6,8 +6,8 @@ import codes from '../data/codes'
 import { log } from 'phev-utils'
 
 const CarController = ({ config, carService, dataHandlers }) => {
-    
-    const sendCommand = (register, value) => carService.sendMessage({register, value: value || 1})
+
+    const sendCommand = (register, value) => carService.sendMessage({ register, value: value || 1 })
 
     const messages = carService.commandMessages()
 
@@ -16,19 +16,18 @@ const CarController = ({ config, carService, dataHandlers }) => {
     const operations = {
         update: () => sendCommand(codes.KO_WF_EV_UPDATE_SP, 3),
         airCon: enabled => sendCommand(codes.KO_WF_MANUAL_AC_ON_RQ_SP, enabled ? 2 : 1),
-        headLights: enabled => sendCommand(codes.KO_WF_H_LAMP_CONT_SP,enabled ? 1 : 2),
-        parkLights: enabled => sendCommand(codes.KO_WF_P_LAMP_CONT_SP,enabled ? 1 : 2),
+        headLights: enabled => sendCommand(codes.KO_WF_H_LAMP_CONT_SP, enabled ? 1 : 2),
+        parkLights: enabled => sendCommand(codes.KO_WF_P_LAMP_CONT_SP, enabled ? 1 : 2),
         sendCommand
     }
 
     const data = dataHandlers
-        .map((handler) => [handler[0],handler[1]({ registers })])
-        .reduce((cur, handler) => 
-            {
-                cur[handler[0]] = handler[1]
-                return cur
-            },{})
-        
+        .map((handler) => [handler[0], handler[1]({ registers })])
+        .reduce((cur, handler) => {
+            cur[handler[0]] = handler[1]
+            return cur
+        }, {})
+
     data.registers = registers
 
     return {

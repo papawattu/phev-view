@@ -49,7 +49,7 @@ class BatteryView extends React.Component {
     }
 
     render() {
-        return <div className="panel panel-default">
+        return <div className="col-lg-6"><div className="panel panel-default">
             <div className="panel-heading">
                 <h4 className="panel-title">Battery</h4>
             </div>
@@ -57,6 +57,7 @@ class BatteryView extends React.Component {
                 <BatteryGauge soc={this.state.soc} remaining={this.state.remaining} state={this.state.charging} />
                 <ChargeState chargeType={this.state.chargeType} state={this.state.charging} />
             </div>
+        </div>
         </div>
     }
 }

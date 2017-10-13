@@ -34,7 +34,7 @@ const Data = props => <td>{props.data.map(data => toHex(data) + ' ')}</td>
 
 const evrCodes = _.pickBy(codes, (x, key) => key.includes('_EVR', x.length - 4))
 
-const regLabel = register => _.findKey(evrCodes, label => label === register) 
+const regLabel = register => _.findKey(evrCodes, label => label === register)
     ? _.findKey(evrCodes, label => label === register) : 'NO LABEL ' + register
 
 const Row = props =>
@@ -64,7 +64,7 @@ const RegisterTable = props =>
 class RegisterView extends React.Component {
     constructor(props) {
         super(props)
-        
+
         this.registers = props.data.registers
         this.operations = props.operations
 
@@ -72,24 +72,24 @@ class RegisterView extends React.Component {
 
     }
     registerUpdate(registers) {
-       /*
-        if(data.register === KO_WF_ECU_CUSTOM_INFO_REP_EVR) {
-            const ecuRegs = data.data.slice(1, 6)
-            
-            ecuRegisters.set(ecuRegs[0],ecuDecode(ecuRegs[0],ecuRegs[1]))
-            ecuRegisters.set(ecuRegs[2],ecuDecode(ecuRegs[2],ecuRegs[3]))
-            ecuRegisters.set(ecuRegs[4],ecuDecode(ecuRegs[4],ecuRegs[5]))
-            
-        } else {
-            
-            registers.set(data.register,data.data)            
-        }
-        */
+        /*
+         if(data.register === KO_WF_ECU_CUSTOM_INFO_REP_EVR) {
+             const ecuRegs = data.data.slice(1, 6)
+             
+             ecuRegisters.set(ecuRegs[0],ecuDecode(ecuRegs[0],ecuRegs[1]))
+             ecuRegisters.set(ecuRegs[2],ecuDecode(ecuRegs[2],ecuRegs[3]))
+             ecuRegisters.set(ecuRegs[4],ecuDecode(ecuRegs[4],ecuRegs[5]))
+             
+         } else {
+             
+             registers.set(data.register,data.data)            
+         }
+         */
         this.setState({ registers })
     }
     componentDidMount() {
-        this.count ++
-        this.setState({ count: this.count})
+        this.count++
+        this.setState({ count: this.count })
         this.registersSub = this.registers
             .subscribe(data => this.registerUpdate(data))
     }

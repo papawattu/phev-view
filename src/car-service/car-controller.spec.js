@@ -40,15 +40,15 @@ describe('Car Controller', () => {
         assert(data.battery)
     })
     it('Should return data object with correct properties', done => {
-        const stub = sinon.stub().returns(Observable.from([{ soc: 100 } ]))
+        const stub = sinon.stub().returns(Observable.from([{ soc: 100 }]))
 
         dataHandlers.push(['battery', stub])
         data = CarController({ config, carService, dataHandlers }).data
-        
+
         const sub = data.battery.subscribe(x => {
-            assert.equal(x.soc,100)
-            done() 
+            assert.equal(x.soc, 100)
+            done()
         })
-        
+
     })
 })
