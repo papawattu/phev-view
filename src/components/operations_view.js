@@ -12,9 +12,6 @@ import {
 } from './modal'
 
 const DEBOUNCE_TIME = 500
-//const AirConButton = props => <button onClick={!props.disabled ? props.airConClick : () => undefined} className={props.disabled ? "disabled" : "" + (props.enabled ? "btn btn-success" : "btn btn-default")}>Air Conditioning</button>
-//const ParkLightsButton = props => <button onClick={props.enabled ? props.airConClick : () => undefined } className={(props.enabled ? "btn btn-success" : "btn btn-default")}><span className="glyphicon glyphicon-lightbulb"></span>Parking Lights</button>
-//const HeadLightsButton = props => <button onClick={props.enabled ? props.airConClick : () => undefined} className={(props.enabled ? "btn btn-success" : "btn btn-default")}>Head Lights</button>
 
 const AirCon = props => <div><label>Air Conditioning</label> <OnOffButton on={props.enabled} onClickHandler={props.airConClick} offClickHandler={props.airConClick}/></div>
 const HeadLights = props => <div><label>Head Lights</label> <OnOffButton on={props.enabled} onClickHandler={props.headLightClick} offClickHandler={props.headLightClick}/></div>
@@ -33,16 +30,22 @@ class OperationsView extends React.Component {
             .switchMap(() => Observable.fromPromise(this.operations.headLights(!this.state.lights.headLightsOn))
                 .catch(err => Observable.of({ status: 500 })))
             .map(response => response.status)
+            .filter(status => status !== 200)
+            
         this.airConSubject = new ReplaySubject()
             .debounceTime(DEBOUNCE_TIME)
             .switchMap(() => Observable.fromPromise(this.operations.airCon(!this.state.airCon.enabled))
                 .catch(err => Observable.of({ status: 500 })))
             .map(response => response.status)
+            .filter(status => status !== 200)
+            
         this.parkLightsSubject = new ReplaySubject()
             .debounceTime(DEBOUNCE_TIME)
             .switchMap(() => Observable.fromPromise(this.operations.parkLights(!this.state.lights.parkingLightsOn))
                 .catch(err => Observable.of({ status: 500 })))
             .map(response => response.status)
+            .filter(status => status !== 200)
+            
 
         this.state = {
             airCon: {
@@ -58,30 +61,15 @@ class OperationsView extends React.Component {
     }
     componentDidMount() {
         this.airConSub = this.airCon
-            .subscribe(data => {
-                this.setState({ airCon: data })
-                console.log('hello')
-            })
+            .subscribe(data => this.setState({ airCon: data }))
         this.lightsSub = this.lights
             .subscribe(data => this.setState({ lights: data }))
         this.headLightSubjectSub = this.headLightSubject
-            .subscribe(status => {
-                if (status !== 200) {
-                    this.setState({ error: 'Server communications error - Failed to change head lights' })
-                }
-            })
+            .subscribe(status => this.setState({ error: 'Server communications error - Failed to change head lights' }))
         this.airConSubjectSub = this.airConSubject
-            .subscribe(status => {
-                if (status !== 200) {
-                    this.setState({ error: 'Server communications error - Failed to change air conditioning' })
-                }
-            })
+            .subscribe(status => this.setState({ error: 'Server communications error - Failed to change air conditioning' }))
         this.parkLightsSubjectSub = this.parkLightsSubject
-            .subscribe(status => {
-                if (status !== 200) {
-                    this.setState({ error: 'Server communications error - Failed to change parking lights' })
-                }
-            })
+            .subscribe(status => this.setState({ error: 'Server communications error - Failed to change parking lights' }))
     }
 
     componentWillUnmount() {
@@ -111,7 +99,6 @@ class OperationsView extends React.Component {
             this.parkLightsSubject.next(event)
         }
         const hideModal = this.hideModal.bind(this)
-        console.log('Air con ' + airConEnabled)
         return <div className="col-lg-6">
             <div className="panel panel-default">
                 <div className="panel-heading">

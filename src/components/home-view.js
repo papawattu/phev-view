@@ -1,10 +1,23 @@
 import React from 'react'
+import Doors from '../model/doors'
 
 class HomeView extends React.Component {
     constructor(props) {
         super(props)
+        this.doors = props.data.doors
+        this.state = { doors: {doorsLocked: true} }
+    }
+    componentDidMount() {
+        this.doorsSub = this.doors
+            .subscribe(data => this.setState( { doors: data }))
+    }
+
+    componentWillUnmount() {
+        this.doorsSub.unsubscribe();
     }
     render() {
+        const doorsLocked = this.state.doors.doorsLocked
+        console.log('Doors ' + JSON.stringify(this.state.doors))
         return <div className="container">
             <div className="col-lg-6">
                 <div className="panel panel-default">
@@ -13,7 +26,7 @@ class HomeView extends React.Component {
                     </div>
                     <div className="panel-body">
                         <ul className="list-group">
-                            <li className="list-group-item">Doors are locked</li>
+                            <li className="list-group-item">Doors are {doorsLocked ? "locked" : "unlocked"}</li>
                             <li className="list-group-item">Alarm is on</li>
                             <li className="list-group-item">Power is Off</li>
                             <li className="list-group-item">Battery is at 50%</li>

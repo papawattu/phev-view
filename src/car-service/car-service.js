@@ -12,7 +12,6 @@ const CarService = ({ config, firebase }) => {
                     .map(y => ({ register: Number.parseInt(y), data: x[y].data})))),
         Observable.fromEvent(firebase.database().ref('registers'),'child_changed')
             .map(x => ({ register: Number.parseInt(x.key), data: x.val().data})))
-            .do(x => x.register !== 8? console.log(x) : undefined)
         .share()
 
     
