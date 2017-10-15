@@ -21,7 +21,7 @@ const charging = register => register.get(codes.KO_WF_OBCHG_OK_ON_INFO_REP_EVR) 
     register.get(codes.KO_WF_OBCHG_OK_ON_INFO_REP_EVR)[0] === 1 :
     undefined
 const remaining = register => register.get(codes.KO_WF_OBCHG_OK_ON_INFO_REP_EVR) ?
-    register.get(codes.KO_WF_OBCHG_OK_ON_INFO_REP_EVR)[2] != MAX_BYTE ?
+    register.get(codes.KO_WF_OBCHG_OK_ON_INFO_REP_EVR)[2] !== MAX_BYTE ?
     timeRemain(register.get(codes.KO_WF_OBCHG_OK_ON_INFO_REP_EVR)) : 0 : undefined
 const batteryRegister = register => register.has(codes.KO_WF_BATT_LEVEL_INFO_REP_EVR) ||
     register.has(codes.KO_WF_OBCHG_OK_ON_INFO_REP_EVR)
