@@ -2,14 +2,6 @@ import React from 'react'
 import OnOffButton from './onoff-button'
 import ErrorModal from './error-modal'
 import { Observable, ReplaySubject } from 'rxjs'
-import {
-    Modal,
-    ModalHeader,
-    ModalTitle,
-    ModalBody,
-    ModalClose,
-    ModalFooter
-} from './modal'
 
 const DEBOUNCE_TIME = 500
 

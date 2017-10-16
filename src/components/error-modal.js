@@ -1,5 +1,12 @@
 import React from 'react'
-
+import {
+    Modal,
+    ModalHeader,
+    ModalTitle,
+    ModalBody,
+    ModalClose,
+    ModalFooter
+} from './modal'
 const ErrorModal = props => props.error !== undefined ? <Modal>
     <ModalHeader>
         <ModalClose close={props.hideModal} />
