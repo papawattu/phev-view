@@ -17,7 +17,7 @@ class HomeView extends React.Component {
     }
     render() {
         const doorsLocked = this.state.doors.doorsLocked
-        console.log('Doors ' + JSON.stringify(this.state.doors))
+        
         return <div className="container">
             <div className="col-lg-6">
                 <div className="panel panel-default">
