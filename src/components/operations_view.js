@@ -16,7 +16,7 @@ const DEBOUNCE_TIME = 500
 const AirCon = props => <div><label>Air Conditioning</label> <OnOffButton on={props.enabled} onClickHandler={props.airConClick} offClickHandler={props.airConClick}/></div>
 const HeadLights = props => <div><label>Head Lights</label> <OnOffButton on={props.enabled} onClickHandler={props.headLightClick} offClickHandler={props.headLightClick}/></div>
 const ParkLights = props => <div><label>Parking Lights</label> <OnOffButton on={props.enabled} onClickHandler={props.parkLightClick} offClickHandler={props.parkLightClick}/></div>
-
+const Refresh = props => <div><button className="btn btn-primary" onClick={props.update}>Update</button></div>
 class OperationsView extends React.Component {
     constructor(props) {
         super(props)
@@ -114,6 +114,7 @@ class OperationsView extends React.Component {
                             </ul>                
                         </div>
                     </div>
+                    <Refresh update={operations.update}/>
                 </div>
                 <ErrorModal error={this.state.error} hideModal={hideModal}/>
             </div>

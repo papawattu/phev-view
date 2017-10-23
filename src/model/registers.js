@@ -1,4 +1,7 @@
 const Registers = ({ messages }) => 
-    messages.scan((registers, register) => registers.set(register.register,register.data),new Map())
+    messages
+        .do(x => console.log(JSON.stringify(x)))
+        .scan((registers, register) => registers.set(register.register,register.data),new Map())
+        
    
 export default Registers  

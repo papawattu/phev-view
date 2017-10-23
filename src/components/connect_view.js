@@ -36,7 +36,7 @@ class ConnectView extends React.Component {
         const lastUpdated = this.state.lastUpdated
         const now = this.state.now
 
-        return (<div className="pull-right"><Connected now={now} updated={lastUpdated}/></div>)
+        return (<div className="pull-right"><LastUpdated updated={lastUpdated}/><Connected now={now} updated={lastUpdated}/></div>)
     }  
 }
 export default ConnectView
