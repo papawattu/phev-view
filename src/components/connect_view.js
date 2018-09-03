@@ -5,7 +5,7 @@ import { Observable } from 'rxjs'
 const isDisconnected = () => <h4><span className="pull-right label label-danger">Disconnected <span className="glyphicon glyphicon-ban-circle" aria-hidden="true"/></span></h4>
 const isConnected = () => <h4><span className="pull-right label label-success">Connected <span className="glyphicon glyphicon-ok-circle" aria-hidden="true"/></span></h4>
 
-const Connected = props => <div>{props.updated ? props.updated.getTime() + 35000 < props.now.getTime() ? isDisconnected() : isConnected() : ''}</div>
+const Connected = props => <div>{props.updated ? props.updated.getTime() + 25000 < props.now.getTime() ? isDisconnected() : isConnected() : ''}</div>
 
 const LastUpdated = props => props.updated ? <p>Last Updated {props.updated.toDateString()} {props.updated.toLocaleTimeString()}</p> : <p>Connecting...</p>
 

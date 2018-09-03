@@ -1,7 +1,7 @@
 import { Observable, ReplaySubject } from 'rxjs'
 import { log } from 'phev-utils'
 
-const CarService = ({ config, firebase }) => {
+const CarService = ({ config, auth, firebase }) => {
 
     const registers = new Observable.concat(
         Observable.fromEventPattern(handler => firebase.database().ref('registers').once('value',handler))
@@ -15,15 +15,21 @@ const CarService = ({ config, firebase }) => {
         .share()
 
     
-    const sendMessage = message => fetch(config.baseUri + '/send', {
+    const sendMessage = message => {
+        const token = auth.getToken()
+        console.log(JSON.stringify(message))
+        console.log('Token ' + token)
+        fetch(config.baseUri + '/operations', {
         method: 'POST',
         body: JSON.stringify(message),
         mode: 'cors',
         headers: {
             'Accept': 'application/json',
-            'Content-Type': 'application/json'
-        },
-    })
+            'Content-Type': 'application/json',
+            'Authorization': 'Bearer ' + token
+            },
+        })
+    }
 
     const commandMessages = () => {
         const subject = new ReplaySubject()
@@ -38,6 +44,5 @@ const CarService = ({ config, firebase }) => {
         commandMessages: commandMessages,
     }
 }
-
 
 export default CarService

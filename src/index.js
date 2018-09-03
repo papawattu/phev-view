@@ -4,4 +4,5 @@ const config = process.env.PRODUCTION ? require('./config').default : require('.
 
 const firebase = process.env.PRODUCTION ? require('firebase') : require('./dev/firebase-stub').default
 
-new App({ config, firebase });
+const auth = process.env.PRODUCTION ? require('./auth').default : require('./dev/auth').default
+new App({ config, auth, firebase });

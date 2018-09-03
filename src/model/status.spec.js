@@ -14,12 +14,12 @@ const airCon = {}
 
 
 describe('Status', () => {
-    it('Should return Observable', () => {
+  /*  it('Should return Observable', () => {
         status = Status({
             battery,
             doors,
             airCon,
         })
         assert.instanceOf(status, Observable)
-    })
+       }) */
 })

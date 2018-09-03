@@ -3,7 +3,7 @@ import OnOffButton from './onoff-button'
 import ErrorModal from './error-modal'
 import { Observable, ReplaySubject } from 'rxjs'
 
-const DEBOUNCE_TIME = 500
+const DEBOUNCE_TIME = 200
 
 const AirCon = props => <div><label>Air Conditioning</label> <OnOffButton on={props.enabled} onClickHandler={props.airConClick} offClickHandler={props.airConClick}/></div>
 const HeadLights = props => <div><label>Head Lights</label> <OnOffButton on={props.enabled} onClickHandler={props.headLightClick} offClickHandler={props.headLightClick}/></div>
@@ -22,21 +22,21 @@ class OperationsView extends React.Component {
             .switchMap(() => Observable.fromPromise(this.operations.headLights(!this.state.lights.headLightsOn))
                 .catch(err => Observable.of({ status: 500 })))
             .map(response => response.status)
-            .filter(status => status !== 200)
+            .filter(status => status !== 200 && status !==204)
             
         this.airConSubject = new ReplaySubject()
             .debounceTime(DEBOUNCE_TIME)
             .switchMap(() => Observable.fromPromise(this.operations.airCon(!this.state.airCon.enabled))
                 .catch(err => Observable.of({ status: 500 })))
             .map(response => response.status)
-            .filter(status => status !== 200)
+            .filter(status => status !== 200 && status !==204)
             
         this.parkLightsSubject = new ReplaySubject()
             .debounceTime(DEBOUNCE_TIME)
             .switchMap(() => Observable.fromPromise(this.operations.parkLights(!this.state.lights.parkingLightsOn))
                 .catch(err => Observable.of({ status: 500 })))
             .map(response => response.status)
-            .filter(status => status !== 200)
+            .filter(status => status !== 200 && status !==204)
             
 
         this.state = {

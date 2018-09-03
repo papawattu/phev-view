@@ -1,6 +1,6 @@
 
 const config = {
-    baseUri: 'http://localhost:8080',
+    baseUri: 'http://localhost:8010/phev/us-central1',
     firebase: {}
 }
 

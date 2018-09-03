@@ -7,6 +7,7 @@ import EventEmmiter from 'events'
 
 const firebase = {}
 const database = {}
+const auth = {}
 const ee = new EventEmmiter()
 database.ref = sinon.stub()
 database.ref.returns(ee)
@@ -15,8 +16,9 @@ firebase.database.returns(database)
 const assert = chai.assert
 global.fetch = sinon.spy()
 config.baseUri = 'http://testapi'
+auth.getToken = () => '1234'
 
-const { sendMessage, commandMessages } = CarService({ config, firebase })
+const { sendMessage, commandMessages } = CarService({ config, auth, firebase })
 
 describe('Car service send', () => {
     beforeEach(() => {
@@ -31,12 +33,12 @@ describe('Car service send', () => {
     it('Should use correct base uri', () => {
 
         sendMessage({ register: 1, value: 2 })
-        assert(global.fetch.calledWith('http://testapi/send'))
+        assert(global.fetch.calledWith('http://testapi/operations'))
 
     })
     it('Should send correct args', () => {
         sendMessage({ register: 1, value: 2 })
-        assert(global.fetch.calledWith('http://testapi/send',
+        assert(global.fetch.calledWith('http://testapi/operations',
             {
                 body: JSON.stringify({
                     register: 1,
@@ -46,7 +48,8 @@ describe('Car service send', () => {
                 mode: 'cors',
                 headers: {
                     'Accept': 'application/json',
-                    'Content-Type': 'application/json'
+                    'Content-Type': 'application/json',
+                    'Authorization': 'Bearer 1234'
                 },
             }
         ))

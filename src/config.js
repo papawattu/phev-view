@@ -1,6 +1,6 @@
 
 const config = {
-    baseUri: process.env.PRODUCTION ? 'https://secure.wattu.com' : 'http://localhost:8081',
+    baseUri: process.env.PRODUCTION ? 'https://us-central1-phev-db3fa.cloudfunctions.net' : 'http://localhost:8010/phev/us-central1',
     firebase: {
         apiKey: 'AIzaSyDo4HOpjUvts6hLHOjDD4ehSkJzUXykNyE',
         authDomain: 'phev-db3fa.firebaseapp.com',
